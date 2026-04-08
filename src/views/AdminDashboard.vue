@@ -42,6 +42,12 @@
           Buses
         </button>
         <button 
+          @click="currentTab = 'Reports'"
+          :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Reports' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
+          <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+          Financials
+        </button>
+        <button 
           @click="currentTab = 'Boarding'"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Boarding' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
@@ -243,6 +249,11 @@
            <PassengerManifest />
         </div>
 
+        <!-- =================== REPORTS TAB =================== -->
+        <div v-if="currentTab === 'Reports'" class="animate-fade-in">
+           <AdminReports />
+        </div>
+
       </div>
     </main>
 
@@ -260,6 +271,7 @@ import AdminCharts from '../components/AdminCharts.vue'
 import SeatMapModal from '../components/SeatMapModal.vue'
 import EditRouteModal from '../components/EditRouteModal.vue'
 import PassengerManifest from '../components/PassengerManifest.vue'
+import AdminReports from '../components/AdminReports.vue'
 
 const currentTab = ref('Overview')
 
