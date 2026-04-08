@@ -26,13 +26,23 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.meta.requiresAuth
   const requiredRole = to.meta.role
   
   if (requiresAuth && !store.isAuthenticated) {
     // Redirect to login if not authenticated
     return next('/admin-login')
+  }
+
+  // If authenticated but profile is loading, wait a bit
+  if (store.isAuthenticated && !store.userProfile) {
+    // Polling or waiting logic (standard for small SPAs)
+    let attempts = 0
+    while (!store.userProfile && attempts < 20) {
+      await new Promise(r => setTimeout(r, 100))
+      attempts++
+    }
   }
 
   if (requiredRole && store.userProfile?.role !== requiredRole) {

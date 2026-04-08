@@ -252,6 +252,7 @@ export const store = reactive({
   async signIn(email, password) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
+    if (data.user) await this.fetchProfile(data.user.id)
     return data
   },
 

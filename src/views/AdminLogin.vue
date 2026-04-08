@@ -9,35 +9,17 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16l-4-4m8 0l-4 4m0-4V8a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2z" />
           </svg>
         </div>
-        <h1 class="text-2xl font-bold text-text-primary tracking-tight">
-          {{ isSignUp ? 'Create Staff Account' : 'Portal Login' }}
-        </h1>
-        <p class="text-sm text-text-secondary mt-1">
-          {{ isSignUp ? 'Register a new administrator or driver' : 'Sign in to manage transportation ops' }}
-        </p>
+        <h1 class="text-2xl font-bold text-text-primary tracking-tight">Staff Portal</h1>
+        <p class="text-sm text-text-secondary mt-1">Sign in to manage transportation operations</p>
       </div>
 
       <!-- Auth Logic Feedback -->
       <div v-if="authError" class="mb-4 p-3 bg-red-50 text-red-600 text-sm font-medium rounded-lg text-center border border-red-100">
         {{ authError }}
       </div>
-      <div v-if="successMsg" class="mb-4 p-3 bg-green-50 text-green-600 text-sm font-medium rounded-lg text-center border border-green-100">
-        {{ successMsg }}
-      </div>
 
-      <!-- Login / SignUp Form -->
+      <!-- Login Form Only (Account creation restricted to Supabase) -->
       <form @submit.prevent="handleSubmit" class="space-y-4">
-        <div v-if="isSignUp">
-          <label class="block text-sm font-medium text-text-primary mb-1.5">Full Name</label>
-          <input 
-            v-model="fullName" 
-            type="text" 
-            class="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent" 
-            placeholder="E.g. Abebe Balcha"
-            required
-          />
-        </div>
-
         <div>
           <label class="block text-sm font-medium text-text-primary mb-1.5">Work Email</label>
           <input 
@@ -52,7 +34,7 @@
         <div>
           <div class="flex justify-between items-center mb-1.5">
             <label class="block text-sm font-medium text-text-primary">Password</label>
-            <a v-if="!isSignUp" href="#" class="text-xs text-accent hover:underline">Forgot?</a>
+            <a href="#" class="text-xs text-accent hover:underline">Forgot?</a>
           </div>
           <input 
             v-model="password" 
@@ -61,15 +43,6 @@
             placeholder="••••••••"
             required
           />
-        </div>
-
-        <!-- Role Select (Sign Up Only) -->
-        <div v-if="isSignUp">
-          <label class="block text-sm font-medium text-text-primary mb-1.5">Assigned Role</label>
-          <select v-model="role" class="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent custom-select">
-            <option value="driver">Driver (Manifests Only)</option>
-            <option value="admin">Administrator (Full Access)</option>
-          </select>
         </div>
 
         <button 
@@ -81,19 +54,12 @@
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span v-else>{{ isSignUp ? 'Create Staff ID' : 'Sign In' }}</span>
+          <span v-else>Secure Sign In</span>
         </button>
       </form>
 
-      <!-- Toggle Mode -->
-      <div class="mt-6 text-center">
-        <button @click="isSignUp = !isSignUp" class="text-xs text-accent font-bold hover:underline">
-          {{ isSignUp ? 'Already have an account? Log In' : 'Need a new staff account? Sign Up' }}
-        </button>
-      </div>
-
-      <div class="mt-8 text-center text-[10px] text-text-secondary uppercase tracking-widest font-black opacity-50">
-        &copy; 2026 NB Transport Authority. Restricted.
+      <div class="mt-8 text-center text-[10px] text-text-secondary uppercase tracking-widest font-black opacity-30">
+        &copy; 2026 NB Transport Authority. <br> Access is restricted to authorized staff.
       </div>
     </div>
   </div>
@@ -103,52 +69,30 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { store } from '../store.js'
-import { supabase } from '../lib/supabase.js'
 
 const router = useRouter()
-const isSignUp = ref(false)
 const isLoading = ref(false)
 const authError = ref('')
-const successMsg = ref('')
 
 const email = ref('')
 const password = ref('')
-const fullName = ref('')
-const role = ref('driver')
 
 const handleSubmit = async () => {
   isLoading.value = true
   authError.value = ''
-  successMsg.value = ''
   
   try {
-    if (isSignUp.value) {
-      // Sign Up Logic
-      const { data, error } = await supabase.auth.signUp({
-        email: email.value,
-        password: password.value,
-        options: {
-          data: {
-            full_name: fullName.value,
-            role: role.value
-          }
-        }
-      })
-      if (error) throw error
-      successMsg.value = 'Account created! Please verify your email or log in.'
-      isSignUp.value = false
+    // We now await the entire process including profile synchronization
+    await store.signIn(email.value, password.value)
+    
+    // Once signed in, we have the role immediately available
+    if (store.userProfile?.role === 'admin') {
+      router.push('/admin')
     } else {
-      // Login Logic
-      await store.signIn(email.value, password.value)
-      
-      // Navigate based on role (after store.init/authChange)
-      setTimeout(() => {
-        if (store.userProfile?.role === 'admin') router.push('/admin')
-        else router.push('/driver')
-      }, 500)
+      router.push('/driver')
     }
   } catch (err) {
-    authError.value = err.message || 'Authentication failed.'
+    authError.value = err.message || 'Authentication failed. Please check your credentials.'
   } finally {
     isLoading.value = false
   }
