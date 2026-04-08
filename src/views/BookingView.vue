@@ -139,9 +139,9 @@ const isFormValid = computed(() => {
 function confirmBooking() {
   if (!fullName.value || !phone.value) return
   
-  // Create booking record in store
-  const newBookingId = String(1000 + store.bookings.length + 1)
-  store.bookings.unshift({
+  // Create booking record in Supabase
+  const newBookingId = String(Math.floor(1000 + Math.random() * 9000))
+  store.addBooking({
     id: newBookingId,
     name: fullName.value,
     phone: phone.value,

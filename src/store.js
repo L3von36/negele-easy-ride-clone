@@ -1,9 +1,14 @@
 import { reactive } from 'vue'
+import { supabase } from './lib/supabase'
 
 export const store = reactive({
   isAuthenticated: false,
   activeLang: 'en',
   
+  bookings: [],
+  routes: [],
+  buses: [],
+
   translations: {
     en: {
       official: 'Official Transport Authority',
@@ -187,33 +192,11 @@ export const store = reactive({
     }
   },
 
-  bookings: [
-    { id: '1092', name: 'Amanuel Tesfaye', route: 'Addis Ababa → Hawassa', date: 'Today, 14:00', amount: 850, status: 'Confirmed', phone: '0911223344', boarded: false },
-    { id: '1091', name: 'Kidist Worku', route: 'Negele Borena → Addis Ababa', date: 'Today, 09:30', amount: 1200, status: 'Confirmed', phone: '0922334455', boarded: true },
-    { id: '1090', name: 'Bereket Desta', route: 'Moyale → Yabello', date: 'Yesterday, 16:45', amount: 600, status: 'Completed', phone: '0933445566', boarded: true },
-    { id: '1089', name: 'Feven Alemu', route: 'Addis Ababa → Negele Borena', date: 'Yesterday, 11:00', amount: 1200, status: 'Completed', phone: '0944556677', boarded: true },
-    { id: '1088', name: 'Yonas Tilahun', route: 'Hawassa → Addis Ababa', date: 'Yesterday, 08:15', amount: 850, status: 'Canceled', phone: '0955667788', boarded: false }
-  ],
-  
-  routes: [
-    { id: 'R1', from: 'Addis Ababa', to: 'Hawassa', price: 850, duration: '4h 30m', distance: '275 km', active: true, blockedSeats: [2, 3] },
-    { id: 'R2', from: 'Negele Borena', to: 'Addis Ababa', price: 1200, duration: '10h 00m', distance: '590 km', active: true, blockedSeats: [] },
-    { id: 'R3', from: 'Moyale', to: 'Yabello', price: 600, duration: '3h 15m', distance: '205 km', active: true, blockedSeats: [1, 2, 3, 4] },
-    { id: 'R4', from: 'Hawassa', to: 'Negele Borena', price: 750, duration: '6h 00m', distance: '320 km', active: false, blockedSeats: [] }
-  ],
-  
-  buses: [
-    { id: 'B01', plate: 'ET-34521', capacity: 45, status: 'Active' },
-    { id: 'B02', plate: 'ET-89102', capacity: 45, status: 'Maintenance' },
-    { id: 'B03', plate: 'ET-11234', capacity: 30, status: 'Active' },
-    { id: 'B04', plate: 'ET-55678', capacity: 60, status: 'Active' }
-  ],
-
   // Getters
   get totalRevenue() {
     return this.bookings
       .filter(b => b.status === 'Confirmed' || b.status === 'Completed')
-      .reduce((sum, b) => sum + b.amount, 0)
+      .reduce((sum, b) => sum + Number(b.amount), 0)
   },
 
   get activeBusesCount() {
@@ -221,88 +204,117 @@ export const store = reactive({
   },
 
   // Actions
-  login() {
-    this.isAuthenticated = true
+  async init() {
+    await Promise.all([
+      this.fetchRoutes(),
+      this.fetchBuses(),
+      this.fetchBookings()
+    ])
+
+    // Enable Realtime Subscriptions
+    supabase
+      .channel('schema-db-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => this.fetchBookings())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'routes' }, () => this.fetchRoutes())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'buses' }, () => this.fetchBuses())
+      .subscribe()
   },
 
-  logout() {
-    this.isAuthenticated = false
+  async fetchRoutes() {
+    const { data } = await supabase.from('routes').select('*').order('created_at', { ascending: true })
+    if (data) this.routes = data.map(r => ({ ...r, from: r.from_city, to: r.to_city, blockedSeats: r.blocked_seats }))
   },
 
-  cancelBooking(id) {
-    const b = this.bookings.find(b => b.id === id)
-    if (b) b.status = 'Canceled'
+  async fetchBuses() {
+    const { data } = await supabase.from('buses').select('*').order('id', { ascending: true })
+    if (data) this.buses = data
+  },
+
+  async fetchBookings() {
+    const { data } = await supabase.from('bookings').select('*').order('created_at', { ascending: false })
+    if (data) this.bookings = data
+  },
+
+  async addBooking(bookingData) {
+    const { error } = await supabase.from('bookings').insert([bookingData])
+    if (error) console.error('Error adding booking:', error)
+    else await this.fetchBookings()
+  },
+
+  async cancelBooking(id) {
+    const { error } = await supabase.from('bookings').update({ status: 'Canceled' }).eq('id', id)
+    if (error) console.error('Error canceling booking:', error)
   },
   
-  confirmBooking(id) {
+  async confirmBooking(id) {
+    const { error } = await supabase.from('bookings').update({ status: 'Confirmed' }).eq('id', id)
+    if (error) console.error('Error confirming booking:', error)
+  },
+
+  async toggleBoarding(id) {
     const b = this.bookings.find(b => b.id === id)
-    if (b) b.status = 'Confirmed'
-  },
-
-  toggleBoarding(id) {
-    const b = this.bookings.find(b => b.id === id)
-    if (b) b.boarded = !b.boarded
-  },
-
-  addRoute(routeData) {
-    this.routes.push({
-      id: 'R' + (this.routes.length + 1),
-      ...routeData,
-      blockedSeats: []
-    })
-  },
-
-  updateRoute(id, updatedData) {
-    const r = this.routes.find(r => r.id === id)
-    if (r) {
-      Object.assign(r, updatedData)
+    if (b) {
+      const { error } = await supabase.from('bookings').update({ boarded: !b.boarded }).eq('id', id)
+      if (error) console.error('Error toggling boarding:', error)
     }
   },
 
-  toggleRouteStatus(id) {
-    const r = this.routes.find(r => r.id === id)
-    if (r) r.active = !r.active
+  async addRoute(routeData) {
+    const dbData = {
+      from_city: routeData.from,
+      to_city: routeData.to,
+      price: routeData.price,
+      duration: routeData.duration || '---',
+      distance: routeData.distance || '---',
+      active: true,
+      blocked_seats: []
+    }
+    const { error } = await supabase.from('routes').insert([dbData])
+    if (error) console.error('Error adding route:', error)
   },
 
-  toggleSeat(routeId, seatNumber) {
+  async toggleRouteStatus(id) {
+    const r = this.routes.find(r => r.id === id)
+    if (r) {
+      const { error } = await supabase.from('routes').update({ active: !r.active }).eq('id', id)
+      if (error) console.error('Error toggling route:', error)
+    }
+  },
+
+  async toggleSeat(routeId, seatNumber) {
     const r = this.routes.find(r => r.id === routeId)
     if (r) {
-      const idx = r.blockedSeats.indexOf(seatNumber)
-      if (idx > -1) {
-        r.blockedSeats.splice(idx, 1)
-      } else {
-        r.blockedSeats.push(seatNumber)
-      }
+      let seats = [...r.blockedSeats]
+      const idx = seats.indexOf(seatNumber)
+      if (idx > -1) seats.splice(idx, 1)
+      else seats.push(seatNumber)
+      
+      const { error } = await supabase.from('routes').update({ blocked_seats: seats }).eq('id', routeId)
+      if (error) console.error('Error toggling seat:', error)
     }
   },
 
-  addBus(busData) {
-    this.buses.push({
-      id: 'B' + String(this.buses.length + 1).padStart(2, '0'),
-      ...busData,
-      status: 'Active'
-    })
+  async addBus(busData) {
+    const { error } = await supabase.from('buses').insert([busData])
+    if (error) console.error('Error adding bus:', error)
   },
 
-  updateBusStatus(id, newStatus) {
-    const b = this.buses.find(b => b.id === id)
-    if (b) b.status = newStatus
+  async updateBusStatus(id, newStatus) {
+    const { error } = await supabase.from('buses').update({ status: newStatus }).eq('id', id)
+    if (error) console.error('Error updating bus status:', error)
   },
 
-  setLanguage(lang) {
-    this.activeLang = lang
-  }
+  login() { this.isAuthenticated = true },
+  logout() { this.isAuthenticated = false },
+  setLanguage(lang) { this.activeLang = lang }
 })
 
 export const t = (key) => {
   const lang = store.activeLang || 'en'
   const dict = store.translations[lang] || store.translations['en']
-  
-  // Handle nested keys like 'cities.addis-ababa'
   if (key.includes('.')) {
     const [main, sub] = key.split('.')
     return dict[main]?.[sub] || store.translations['en'][main]?.[sub] || key
   }
-  
   return dict[key] || store.translations['en'][key] || key
 }
