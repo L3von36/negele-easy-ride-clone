@@ -28,12 +28,14 @@
             <option value="am" class="text-black">አማ</option>
             <option value="om" class="text-black">Orom</option>
           </select>
-          <button 
+          <AppButton 
             @click="search"
-            class="hidden sm:inline-flex px-4 py-2 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors"
+            variant="primary"
+            class="hidden sm:inline-flex"
+            size="sm"
           >
             {{ t('search_buses') }}
-          </button>
+          </AppButton>
           <button class="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -100,14 +102,13 @@
                 <input v-model="travelDate" type="date" class="w-full px-3 sm:px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent" />
               </div>
               <div class="flex items-end">
-                <button 
+                <AppButton 
                   type="submit" 
+                  fullWidth
                   :disabled="!fromCity || !toCity"
-                  :class="!fromCity || !toCity ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black'"
-                  class="w-full bg-accent text-white font-semibold px-8 py-3 rounded-xl transition-colors duration-200 text-sm"
                 >
                   {{ t('search_buses') }}
-                </button>
+                </AppButton>
               </div>
             </div>
           </form>
@@ -176,8 +177,15 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-[#0F172A] text-white/70 py-8 mt-auto border-t border-white/10">
-      <p class="text-center text-xs sm:text-sm font-medium">{{ t('copyright') }}</p>
+    <footer class="bg-[#0F172A] text-white/70 py-10 mt-auto border-t border-white/10">
+      <div class="max-w-7xl mx-auto px-6 flex flex-col items-center gap-6">
+        <p class="text-center text-xs sm:text-sm font-medium">{{ t('copyright') }}</p>
+        <div class="flex items-center gap-6 text-xs uppercase tracking-widest font-bold">
+          <router-link to="/driver" class="hover:text-accent transition-colors">Driver Portal</router-link>
+          <span class="w-1 h-1 bg-white/20 rounded-full"></span>
+          <router-link to="/admin-login" class="hover:text-accent transition-colors">Admin Portal</router-link>
+        </div>
+      </div>
     </footer>
   </div>
 </template>
@@ -186,6 +194,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { store, t } from '../store.js'
+import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
 

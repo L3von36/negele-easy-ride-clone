@@ -6,6 +6,7 @@ import BookingView       from '../views/BookingView.vue'
 import ConfirmationView  from '../views/ConfirmationView.vue'
 import AdminDashboard    from '../views/AdminDashboard.vue'
 import AdminLogin        from '../views/AdminLogin.vue'
+import DriverDashboard   from '../views/DriverDashboard.vue'
 import { store }         from '../store.js'
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
   { path: '/confirmation',  name: 'confirmation',  component: ConfirmationView },
   { path: '/admin-login',   name: 'admin-login',   component: AdminLogin },
   { path: '/admin',         name: 'admin',         component: AdminDashboard, meta: { requiresAuth: true } },
+  { path: '/driver',        name: 'driver',        component: DriverDashboard },
 ]
 
 const router = createRouter({

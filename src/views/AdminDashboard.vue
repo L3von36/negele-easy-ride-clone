@@ -41,6 +41,12 @@
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
           Buses
         </button>
+        <button 
+          @click="currentTab = 'Boarding'"
+          :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Boarding' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
+          <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+          Boarding
+        </button>
       </nav>
       
       <!-- User / Logout -->
@@ -228,65 +234,9 @@
           </div>
         </div>
 
-        <!-- =================== BUSES TAB =================== -->
-        <div v-if="currentTab === 'Buses'" class="animate-fade-in space-y-6">
-          
-          <!-- Add Bus Form -->
-          <div class="bg-card rounded-xl border border-border shadow-soft overflow-hidden p-6">
-            <h3 class="text-lg font-bold text-text-primary mb-4">Register New Bus</h3>
-            <form @submit.prevent="handleNewBus" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <input v-model="newBus.plate" type="text" placeholder="License Plate (e.g. ET-99812)" class="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-accent" required />
-              </div>
-              <div>
-                <input v-model="newBus.capacity" type="number" placeholder="Capacity (Seats)" class="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-accent" required />
-              </div>
-              <div>
-                <button type="submit" class="w-full bg-black text-white hover:bg-accent transition-colors py-2 rounded-lg text-sm font-medium">Add to Fleet</button>
-              </div>
-            </form>
-          </div>
-
-          <!-- Bus Table -->
-          <div class="bg-card rounded-xl border border-border shadow-soft overflow-hidden">
-            <div class="px-6 py-5 border-b border-border">
-              <h3 class="text-lg font-bold text-text-primary">Bus Fleet</h3>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse min-w-[500px]">
-                <thead>
-                  <tr class="bg-primary-100/50">
-                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">ID / Plate</th>
-                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Capacity</th>
-                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Status</th>
-                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-border bg-card">
-                  <tr v-for="bus in store.buses" :key="bus.id" class="hover:bg-primary-100/30 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-text-primary">{{ bus.id }} <span class="pl-2 font-normal text-text-secondary">{{ bus.plate }}</span></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{{ bus.capacity }} seats</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span v-if="bus.status === 'Active'" class="px-2.5 py-1 inline-flex text-[10px] leading-4 font-bold rounded-full bg-green-100 text-green-800 uppercase tracking-wider">Active</span>
-                      <span v-else-if="bus.status === 'Maintenance'" class="px-2.5 py-1 inline-flex text-[10px] leading-4 font-bold rounded-full bg-orange-100 text-orange-800 uppercase tracking-wider">Maintenance</span>
-                      <span v-else class="px-2.5 py-1 inline-flex text-[10px] leading-4 font-bold rounded-full bg-red-100 text-red-800 uppercase tracking-wider">Retired</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <select 
-                        @change="(e) => store.updateBusStatus(bus.id, e.target.value)"
-                        :value="bus.status"
-                        class="custom-select border border-border rounded text-sm px-2 py-1 bg-background focus:outline-none focus:border-accent"
-                      >
-                        <option value="Active">Mark Active</option>
-                        <option value="Maintenance">Send to Maintenance</option>
-                        <option value="Retired">Retire Bus</option>
-                      </select>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <!-- =================== BOARDING TAB =================== -->
+        <div v-if="currentTab === 'Boarding'" class="animate-fade-in">
+           <PassengerManifest />
         </div>
 
       </div>
@@ -305,6 +255,7 @@ import { store } from '../store.js'
 import AdminCharts from '../components/AdminCharts.vue'
 import SeatMapModal from '../components/SeatMapModal.vue'
 import EditRouteModal from '../components/EditRouteModal.vue'
+import PassengerManifest from '../components/PassengerManifest.vue'
 
 const currentTab = ref('Overview')
 

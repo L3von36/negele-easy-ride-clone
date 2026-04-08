@@ -95,13 +95,14 @@
       </div>
 
       <!-- Confirm button -->
-      <button
+      <AppButton
         @click="confirmBooking"
         :disabled="!isFormValid"
-        :class="isFormValid ? 'bg-accent text-white hover:bg-black hover:shadow-medium active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-border'"
-        class="w-full font-bold py-4 rounded-xl transition-all duration-200 text-sm shadow-soft">
+        fullWidth
+        class="shadow-soft"
+      >
         {{ t('confirm_booking') }} — {{ price }} {{ t('etb_label') }}
-      </button>
+      </AppButton>
 
       <!-- Terms -->
       <p class="text-center text-xs text-text-secondary mt-4">
@@ -115,6 +116,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store, t } from '../store.js'
+import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
 const route  = useRoute()
@@ -142,10 +144,12 @@ function confirmBooking() {
   store.bookings.unshift({
     id: newBookingId,
     name: fullName.value,
+    phone: phone.value,
     route: `${from.value} → ${to.value}`,
     date: date.value + ', ' + depart.value,
     amount: Number(price.value),
-    status: 'Confirmed'
+    status: 'Confirmed',
+    boarded: false
   })
 
   router.push({

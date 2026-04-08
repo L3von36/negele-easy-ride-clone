@@ -39,9 +39,9 @@
 
       <!-- Success icon -->
       <div class="flex justify-center mb-5 mt-4">
-        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border border-border bg-card flex items-center justify-center animate-fade-in shadow-soft">
-          <svg class="h-8 w-8 sm:h-10 sm:w-10 text-text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-accent bg-accent/10 flex items-center justify-center animate-fade-in shadow-lg">
+          <svg class="h-8 w-8 sm:h-10 sm:w-10 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
           </svg>
         </div>
       </div>
@@ -56,7 +56,7 @@
       </div>
 
       <!-- Boarding Pass -->
-      <div class="bg-card rounded-xl border border-border shadow-soft overflow-hidden mb-6 animate-fade-in">
+      <div class="bg-card rounded-2xl border-t-4 border-accent border border-border shadow-medium overflow-hidden mb-6 animate-fade-in">
         <!-- Header strip -->
         <div class="bg-primary-100 px-5 sm:px-6 py-4 border-b border-border">
           <div class="flex items-center gap-2 mb-1">
@@ -115,11 +115,13 @@
       </div>
 
       <!-- Book another -->
-      <button
+      <AppButton
         @click="$router.push('/')"
-        class="w-full border-2 border-border bg-card text-text-primary font-semibold py-4 rounded-xl hover:border-text-primary transition-all duration-200 text-sm shadow-soft">
+        variant="outline"
+        fullWidth
+      >
         {{ t('book_another') }}
-      </button>
+      </AppButton>
     </div>
   </div>
 </template>
@@ -128,6 +130,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { store, t } from '../store.js'
+import AppButton from '../components/AppButton.vue'
 
 const route = useRoute()
 

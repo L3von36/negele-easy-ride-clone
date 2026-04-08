@@ -116,13 +116,13 @@
 
       <!-- Continue button -->
       <div class="mt-6 sticky bottom-4">
-          <button
+          <AppButton
+            fullWidth
             @click="confirmSeat"
             :disabled="!selectedSeat"
-            :class="selectedSeat ? 'bg-accent text-white hover:bg-black hover:shadow-medium active:scale-95' : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-border'"
-            class="w-full font-bold py-4 rounded-xl transition-all duration-200 text-sm">
+          >
             {{ selectedSeat ? `${t('confirm_booking')} — #${selectedSeat}` : t('select_seat') }}
-          </button>
+          </AppButton>
       </div>
     </div>
   </div>
@@ -132,6 +132,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store, t } from '../store.js'
+import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
 const route  = useRoute()

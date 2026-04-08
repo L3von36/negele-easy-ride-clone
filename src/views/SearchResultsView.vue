@@ -117,11 +117,12 @@
           </div>
 
           <!-- CTA -->
-          <button
+          <AppButton
+            fullWidth
             @click="selectBus(bus)"
-            class="w-full bg-accent text-white font-semibold py-3 rounded-lg hover:bg-black active:scale-95 hover:shadow-medium transition-all duration-200 text-sm">
+          >
             {{ t('select_seat') }} →
-          </button>
+          </AppButton>
         </div>
       </div>
     </div>
@@ -132,6 +133,7 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store, t } from '../store.js'
+import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
 const routeQuery = useRoute()

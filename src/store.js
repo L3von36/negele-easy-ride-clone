@@ -188,11 +188,11 @@ export const store = reactive({
   },
 
   bookings: [
-    { id: '1092', name: 'Amanuel Tesfaye', route: 'Addis Ababa → Hawassa', date: 'Today, 14:00', amount: 850, status: 'Confirmed' },
-    { id: '1091', name: 'Kidist Worku', route: 'Negele Borena → Addis Ababa', date: 'Today, 09:30', amount: 1200, status: 'Confirmed' },
-    { id: '1090', name: 'Bereket Desta', route: 'Moyale → Yabello', date: 'Yesterday, 16:45', amount: 600, status: 'Completed' },
-    { id: '1089', name: 'Feven Alemu', route: 'Addis Ababa → Negele Borena', date: 'Yesterday, 11:00', amount: 1200, status: 'Completed' },
-    { id: '1088', name: 'Yonas Tilahun', route: 'Hawassa → Addis Ababa', date: 'Yesterday, 08:15', amount: 850, status: 'Canceled' }
+    { id: '1092', name: 'Amanuel Tesfaye', route: 'Addis Ababa → Hawassa', date: 'Today, 14:00', amount: 850, status: 'Confirmed', phone: '0911223344', boarded: false },
+    { id: '1091', name: 'Kidist Worku', route: 'Negele Borena → Addis Ababa', date: 'Today, 09:30', amount: 1200, status: 'Confirmed', phone: '0922334455', boarded: true },
+    { id: '1090', name: 'Bereket Desta', route: 'Moyale → Yabello', date: 'Yesterday, 16:45', amount: 600, status: 'Completed', phone: '0933445566', boarded: true },
+    { id: '1089', name: 'Feven Alemu', route: 'Addis Ababa → Negele Borena', date: 'Yesterday, 11:00', amount: 1200, status: 'Completed', phone: '0944556677', boarded: true },
+    { id: '1088', name: 'Yonas Tilahun', route: 'Hawassa → Addis Ababa', date: 'Yesterday, 08:15', amount: 850, status: 'Canceled', phone: '0955667788', boarded: false }
   ],
   
   routes: [
@@ -237,6 +237,11 @@ export const store = reactive({
   confirmBooking(id) {
     const b = this.bookings.find(b => b.id === id)
     if (b) b.status = 'Confirmed'
+  },
+
+  toggleBoarding(id) {
+    const b = this.bookings.find(b => b.id === id)
+    if (b) b.boarded = !b.boarded
   },
 
   addRoute(routeData) {
