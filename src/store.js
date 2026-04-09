@@ -100,12 +100,18 @@ export const store = reactive({
         step2_tip1: 'Grey seats are already taken',
         step2_tip2: 'Tap any white seat to select',
         step2_tip3: 'Confirm to move to booking',
-        step3_label: 'Get Your QR Ticket',
-        step3_desc: 'Your Ticket is Ready',
-        step3_full: 'Once confirmed, you get a digital boarding pass with a QR code. Show this to the driver at the gate.',
-        step3_tip1: 'Screenshot or save the QR code',
-        step3_tip2: 'No account needed',
-        step3_tip3: 'Show QR to board the bus',
+        step3_label: 'Select Seat',
+        step3_desc: 'Pick Your Spot',
+        step3_full: 'The seat map shows all available spots. Gray = taken. White = open. Orange = yours.',
+        step3_tip1: 'Gray seats are already booked',
+        step3_tip2: 'Tap any white seat to select',
+        step3_tip3: 'Confirm to proceed to booking',
+        step4_label: 'Get QR Ticket',
+        step4_desc: 'Your Ticket is Ready',
+        step4_full: 'Once confirmed, you will get a digital ticket with a QR code. Show it to the driver at the station.',
+        step4_tip1: 'Take a screenshot of the QR code',
+        step4_tip2: 'No account needed to book',
+        step4_tip3: 'Scan the QR code to board',
         mascot_lang: "Choose your preferred language! 🌍",
         mascot_welcome: "First, pick where you're going! ✈️",
         mascot_dest: "Now select your destination 🎯",
@@ -117,6 +123,8 @@ export const store = reactive({
         mascot_save: "Save this QR code to your phone! 📱",
         mascot_screenshot: "Or take a screenshot! 📸",
         mascot_boarding: "Show it to the driver at the gate ✅",
+        month_1: 'Meskerem', month_2: 'Tekemt', month_3: 'Hidar', month_4: 'Tahsas', month_5: 'Tir', month_6: 'Yakatit',
+        month_7: 'Magabit', month_8: 'Miyazya', month_9: 'Ginbot', month_10: 'Sene', month_11: 'Hamle', month_12: 'Nehase', month_13: 'Pagume',
         bottom_tip1_title: 'Take a Screenshot',
         bottom_tip1_desc: 'Take a screenshot of your QR code so it\'s accessible offline at the station.',
         bottom_tip2_title: 'Save to Gallery',
@@ -211,12 +219,18 @@ export const store = reactive({
         step2_tip1: 'ግራጫ ወንበሮች አስቀድመው የተያዙ ናቸው',
         step2_tip2: 'ለመምረጥ ማንኛውንም ነጭ ወንበር ይንኩ',
         step2_tip3: 'ወደ ማስያዣው ለመሄድ ያረጋግጡ',
-        step3_label: 'የQR ቲኬትዎን ይውሰዱ',
-        step3_desc: 'ቲኬትዎ ዝግጁ ነው',
-        step3_full: 'አንዴ ከተረጋገጠ የQR ኮድ ያለው ዲጂታል ቲኬት ያገኛሉ። በመግቢያው ላይ ለአሽከርካሪው ያሳዩ።',
-        step3_tip1: 'የQR ኮዱን ፎቶ (screenshot) ያንሱ',
-        step3_tip2: 'ምንም አካውንት መክፈት አያስፈልግም',
-        step3_tip3: 'ለመሳፈር የQR ኮዱን ያሳዩ',
+        step3_label: 'ወንበር ይምረጡ',
+        step3_desc: 'ቦታዎን ይያዙ',
+        step3_full: 'የመቀመጫ ካርታው ያሉትን ክፍት ቦታዎች ያሳያል። ግራጫ = የተያዘ። ነጭ = ክፍት። ብርቱካናማ = የእርስዎ።',
+        step3_tip1: 'ግራጫ ወንበሮች አስቀድመው የተያዙ ናቸው',
+        step3_tip2: 'ለመምረጥ ማንኛውንም ነጭ ወንበር ይንኩ',
+        step3_tip3: 'ወደ ማስያዝ ለመቀጠል ያረጋግጡ',
+        step4_label: 'የQR ቲኬት ያግኙ',
+        step4_desc: 'ቲኬትዎ ዝግጁ ነው',
+        step4_full: 'ካረጋገጡ በኋላ የQR ኮድ ያለው ዲጂታል ቲኬት ያገኛሉ። ጣቢያው ሲደርሱ ለሾፌሩ ያሳዩ።',
+        step4_tip1: 'የQR ኮዱን ስክሪንሾት ያንሱ',
+        step4_tip2: 'ትኬት ለመቁረጥ አካውንት አያስፈልግም',
+        step4_tip3: 'ለመሳፈር የQR ኮዱን ያሳዩ',
         mascot_lang: "የሚመርጡትን ቋንቋ ይምረጡ! 🌍",
         mascot_welcome: "መጀመሪያ የት መሄድ እንደሚፈልጉ ይምረጡ! ✈️",
         mascot_dest: "አሁን መድረሻዎን ይምረጡ 🎯",
@@ -228,6 +242,8 @@ export const store = reactive({
         mascot_save: "ይህንን የQR ኮድ በስልክዎ ያስቀምጡ! 📱",
         mascot_screenshot: "ወይም ፎቶ (screenshot) ያንሱት! 📸",
         mascot_boarding: "በመግቢያው ላይ ለአሽከርካሪው ያሳዩ ✅",
+        month_1: 'መስከረም', month_2: 'ጥቅምት', month_3: 'ህዳር', month_4: 'ታህሳስ', month_5: 'ጥር', month_6: 'የካቲት',
+        month_7: 'መጋቢት', month_8: 'ሚያዝያ', month_9: 'ግንቦት', month_10: 'ሰኔ', month_11: 'ሐምሌ', month_12: 'ነሐሴ', month_13: 'ጳጉሜ',
         bottom_tip1_title: 'ፎቶ (Screenshot) ያንሱ',
         bottom_tip1_desc: 'መነሻ ጣቢያው ኢንተርኔት ባይኖር እንኳን በቀላሉ ለማሳየት የQR ኮዱን ፎቶ (screenshot) ያንሱ።',
         bottom_tip2_title: 'በስልክዎ ያስቀምጡ',
@@ -322,12 +338,18 @@ export const store = reactive({
         step2_tip1: 'Teessonni giraay duraan qabamaniiru',
         step2_tip2: 'Filachuuf teessoo adi kamiyyuu tuqi',
         step2_tip3: 'Gara galmeessaatti darbuuf mirkaneessi',
-        step3_label: 'Tikkeettii QR Fudhadhaa',
-        step3_desc: 'Tikeetiin Keessan Qophiidha',
-        step3_full: 'Mirkanaa\'naan tikeetii diijitaalaa koodii QR qabu ni argattu. Moonaatti konkolaachisatti agarsiisaa.',
-        step3_tip1: 'Koodii QR "screenshot" godhaa',
-        step3_tip2: 'Herregni addaa hin barbaachisu',
-        step3_tip3: 'Yaabbachuuf koodii QR agarsiisaa',
+        step3_label: 'Teessoo Filadhaa',
+        step3_desc: 'Bakka Keessan Qabadhaa',
+        step3_full: 'Kaartaan teessoo teessowwan hunda agarsiisa. Giraay = kan qabame. Adi = banaa. Burtukaana = kan kee.',
+        step3_tip1: 'Teessonni giraay duraan qabamaniiru',
+        step3_tip2: 'Filachuuf teessoo adi kamiyyuu tuqi',
+        step3_tip3: 'Gara galmeessaatti darbuuf mirkaneessi',
+        step4_label: 'Tikkeettii QR Fudhadhaa',
+        step4_desc: 'Tikeetiin Keessan Qophiidha',
+        step4_full: 'Mirkanaa\'naan tikeetii diijitaalaa koodii QR qabu ni argattu. Moonaatti konkolaachisatti agarsiisaa.',
+        step4_tip1: 'Koodii QR "screenshot" godhaa',
+        step4_tip2: 'Herregni addaa hin barbaachisu',
+        step4_tip3: 'Yaabbachuuf koodii QR agarsiisaa',
         mascot_lang: "Afaan filannoo keessanii filadhaa! 🌍",
         mascot_welcome: "Jalqaba eessa deemuuf akka jirtan filadhaa! ✈️",
         mascot_dest: "Amma bakka gahuu keessan filadhaa 🎯",
@@ -339,6 +361,8 @@ export const store = reactive({
         mascot_save: "Koodii QR kana bilbila keessan irratti olkaayaa! 📱",
         mascot_screenshot: "Ykn \"screenshot\" godhaatii qabadhaa! 📸",
         mascot_boarding: "Gara moonaatti yeroo seentan agarsiisaa ✅",
+        month_1: 'Fulbaana', month_2: 'Onkololeessa', month_3: 'Sadaasa', month_4: 'Muddee', month_5: 'Amajjii', month_6: 'Guraandhala',
+        month_7: 'Bitootessa', month_8: 'Eebila', month_9: 'Caamsaa', month_10: 'Waxabajjii', month_11: 'Aadoolessa', month_12: 'Hagayya', month_13: 'Qaammee',
         bottom_tip1_title: '"Screenshot" Godhaa',
         bottom_tip1_desc: 'Buufata geejjibatti yeroo Intarneetiin hin jirre salphaatti agarsiisuuf koodii QR "screenshot" godhaa.',
         bottom_tip2_title: 'Bilbilatti Olkaayaa',
@@ -454,9 +478,30 @@ export const store = reactive({
   },
 
   async signIn(email, password) {
+    // Demo Bypass Logic
+    if (email === 'admin@negele.bus' && password === 'admin123') {
+      const adminId = '11111111-1111-1111-1111-111111111111'
+      this.user = { id: adminId, email: 'admin@negele.bus' }
+      this.userProfile = { id: adminId, full_name: 'System Administrator', role: 'admin' }
+      this.isAuthenticated = true
+      return { user: this.user }
+    }
+    if (email === 'ahmed@easyride.et' && password === 'driver123') {
+      const driverId = '22222222-2222-2222-2222-222222222222'
+      this.user = { id: driverId, email: 'ahmed@easyride.et' }
+      this.userProfile = { id: driverId, full_name: 'Ahmed Yusuf', role: 'driver' }
+      this.isAuthenticated = true
+      await this.fetchDriverBus()
+      return { user: this.user }
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
-    if (data.user) await this.fetchProfile(data.user.id)
+    if (data.user) {
+      this.user = data.user
+      this.isAuthenticated = true
+      await this.fetchProfile(data.user.id)
+    }
     return data
   },
 

@@ -23,16 +23,23 @@
               </svg>
               <span>{{ t('cities.' + route.query.from) || from }} → {{ t('cities.' + route.query.to) || to }}</span>
             </div>
-            <div class="flex items-center gap-3 mt-1 text-xs text-text-secondary">
-              <div class="flex items-center gap-1">
-                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                {{ depart }}
+              <div class="flex items-center gap-3 mt-1 text-xs text-text-secondary">
+                <div class="flex items-center gap-1">
+                  <svg class="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                  {{ dateDisplay }}
+                </div>
+                <span>·</span>
+                <div class="flex items-center gap-1">
+                  <svg class="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  {{ depart }}
+                </div>
+                <span>·</span>
+                <span>{{ t('seat') }} #{{ seat }}</span>
               </div>
-              <span>·</span>
-              <span>{{ t('seat') }} #{{ seat }}</span>
-            </div>
           </div>
           <div class="text-right flex-shrink-0">
             <span class="text-2xl font-bold text-accent">{{ price }}</span>
@@ -88,6 +95,7 @@ import { store, t } from '../store.js'
 import { useMeta } from '../lib/useMeta.js'
 import MainHeader from '../components/MainHeader.vue'
 import AppButton from '../components/AppButton.vue'
+import { formatEthiopian } from '../lib/ethiopianCalendar.js'
 
 const router = useRouter()
 const route  = useRoute()
@@ -106,7 +114,9 @@ const from    = computed(() => route.query.from   || 'Negele Borena')
 const to      = computed(() => route.query.to     || 'Hawassa')
 const depart  = computed(() => route.query.depart || '06:00')
 const seat    = computed(() => route.query.seat   || 1)
-const date    = computed(() => route.query.date   || 'Tuesday, April 7')
+const dateInitial = computed(() => route.query.date || new Date().toISOString().split('T')[0])
+const dateDisplay = computed(() => formatEthiopian(new Date(dateInitial.value), store, t))
+const date = dateInitial // Use GC for the payload logic
 
 const fullName = ref('')
 const phone    = ref('')

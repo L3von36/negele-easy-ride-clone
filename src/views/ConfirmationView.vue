@@ -106,6 +106,7 @@ import { store, t } from '../store.js'
 import MainHeader from '../components/MainHeader.vue'
 import AppButton from '../components/AppButton.vue'
 import QrcodeVue from 'qrcode.vue'
+import { formatEthiopian } from '../lib/ethiopianCalendar.js'
 
 const route = useRoute()
 
@@ -115,7 +116,8 @@ const from    = computed(() => route.query.from   || 'Negele Borena')
 const to      = computed(() => route.query.to     || 'Hawassa')
 const depart  = computed(() => route.query.depart || '06:00')
 const seat    = computed(() => route.query.seat   || 1)
-const date    = computed(() => route.query.date   || 'Tue, Apr 7')
+const dateInitial = computed(() => route.query.date || new Date().toISOString())
+const date    = computed(() => formatEthiopian(new Date(dateInitial.value), store, t))
 const name    = computed(() => route.query.name   || '—')
 const phone   = computed(() => route.query.phone  || '—')
 const bookingId = computed(() => route.query.id)

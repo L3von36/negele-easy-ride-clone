@@ -58,7 +58,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs sm:text-sm font-medium text-text-primary mb-1.5">{{ t('date') }}</label>
-                <input v-model="travelDate" type="date" class="w-full px-3 sm:px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent" />
+                <DatePickerEthiopian v-model="travelDate" />
               </div>
               <div class="flex items-end">
                 <AppButton 
@@ -160,6 +160,7 @@ import { useMeta } from '../lib/useMeta.js'
 import MainHeader from '../components/MainHeader.vue'
 import AppButton from '../components/AppButton.vue'
 import OnboardingGuide from '../components/OnboardingGuide.vue'
+import DatePickerEthiopian from '../components/DatePickerEthiopian.vue'
 
 const router = useRouter()
 const { setMeta } = useMeta()

@@ -154,14 +154,18 @@
         <div v-if="currentTab === 'Bookings'" class="animate-fade-in bg-card rounded-xl border border-border shadow-soft overflow-hidden">
           <div class="px-6 py-5 border-b border-border flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <h3 class="text-lg font-bold text-text-primary">All Bookings</h3>
-            <div class="flex items-center space-x-3">
+            <div class="flex flex-col sm:flex-row items-center gap-3">
               <input 
                 v-model="bookingSearch" 
                 type="text" 
                 placeholder="Search name or ID..." 
-                class="px-3 py-1.5 border border-border rounded-lg text-sm bg-background focus:outline-none focus:border-accent w-full sm:w-64"
+                class="px-3 py-2 border border-border rounded-lg text-sm bg-background focus:outline-none focus:border-accent w-full sm:w-48"
               />
-              <button @click="exportCSV" class="bg-primary-100 border border-border hover:bg-gray-100 text-text-primary px-3 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
+              <div class="w-full sm:w-48">
+                <DatePickerEthiopian v-model="bookingDateFilter" placeholder="Filter by Date" />
+              </div>
+              <button v-if="bookingDateFilter" @click="bookingDateFilter = ''" class="text-xs font-bold text-red-500 hover:text-red-600 px-2 whitespace-nowrap">Clear Date</button>
+              <button @click="exportCSV" class="bg-primary-100 border border-border hover:bg-gray-100 text-text-primary px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
                 Export CSV
               </button>
             </div>
@@ -182,7 +186,7 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-text-primary">#{{ booking.id }}</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                     {{ booking.name }}<br>
-                    <span class="text-xs">{{ booking.date }}</span>
+                    <span class="text-xs">{{ formatEthiopian(new Date(booking.date), store, t) }}</span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary font-medium">{{ booking.route }}</td>
                   <td class="px-6 py-4 whitespace-nowrap">
@@ -359,13 +363,17 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { store } from '../store.js'
 import AdminCharts from '../components/AdminCharts.vue'
 import SeatMapModal from '../components/SeatMapModal.vue'
 import EditRouteModal from '../components/EditRouteModal.vue'
-import PassengerManifest from '../components/PassengerManifest.vue'
 import AdminReports from '../components/AdminReports.vue'
+import DatePickerEthiopian from '../components/DatePickerEthiopian.vue'
+import { formatEthiopian, currentEthiopian } from '../lib/ethiopianCalendar.js'
+import { t } from '../store.js'
 
+const router = useRouter()
 const isSidebarOpen = ref(false)
 const currentTab = ref('Overview')
 
@@ -413,30 +421,39 @@ function handleNewBus() {
   }
 }
 
-// Booking Search
+// Booking Search & Filter
 const bookingSearch = ref('')
+const bookingDateFilter = ref('')
 const filteredBookings = computed(() => {
-  if (!bookingSearch.value) return store.bookings
-  const query = bookingSearch.value.toLowerCase()
-  return store.bookings.filter(b => 
-    b.name.toLowerCase().includes(query) || 
-    b.id.toLowerCase().includes(query) ||
-    b.route.toLowerCase().includes(query)
-  )
+  let list = store.bookings
+  if (bookingDateFilter.value) {
+    list = list.filter(b => b.date && b.date.includes(bookingDateFilter.value))
+  }
+  if (bookingSearch.value) {
+    const query = bookingSearch.value.toLowerCase()
+    list = list.filter(b => 
+      b.name.toLowerCase().includes(query) || 
+      b.id.toLowerCase().includes(query) ||
+      b.route.toLowerCase().includes(query)
+    )
+  }
+  return list
 })
 
 // Export CSV
 function exportCSV() {
   const headers = ['ID', 'Passenger Name', 'Route', 'Date', 'Amount', 'Status']
-  const rows = filteredBookings.value.map(b => [b.id, b.name, b.route, b.date, b.amount, b.status])
+  const rows = filteredBookings.value.map(b => [b.id, b.name, b.route, formatEthiopian(new Date(b.date), store, t), b.amount, b.status])
   
   const csvContent = "data:text/csv;charset=utf-8," 
     + [headers.join(","), ...rows.map(e => e.join(","))].join("\n")
     
+  const et = currentEthiopian()
+  const dateStr = `${et.year}-${String(et.month).padStart(2, '0')}-${String(et.day).padStart(2, '0')}`
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement("a")
   link.setAttribute("href", encodedUri)
-  link.setAttribute("download", `bookings_export_${new Date().toISOString().slice(0,10)}.csv`)
+  link.setAttribute("download", `bookings_export_${dateStr}.csv`)
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

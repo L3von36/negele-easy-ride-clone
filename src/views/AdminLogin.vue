@@ -52,6 +52,19 @@
           </svg>
           <span v-else>Secure Sign In</span>
         </button>
+
+        <div class="relative my-6">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-border"></div></div>
+          <div class="relative flex justify-center text-xs uppercase"><span class="bg-card px-2 text-text-secondary font-bold">Or Demo Mode</span></div>
+        </div>
+
+        <button 
+          @click="loginAsDemo"
+          type="button"
+          class="w-full bg-primary-100 text-text-primary font-bold py-3 rounded-xl hover:bg-gray-100 transition-colors border border-border flex justify-center items-center h-12"
+        >
+          🚀 Instant Admin Demo
+        </button>
       </form>
 
       <div class="mt-8 text-center text-[10px] text-text-secondary uppercase tracking-widest font-black opacity-30">
@@ -72,6 +85,12 @@ const authError = ref('')
 
 const email = ref('')
 const password = ref('')
+
+const loginAsDemo = async () => {
+  email.value = 'admin@negele.bus'
+  password.value = 'admin123'
+  await handleSubmit()
+}
 
 const handleSubmit = async () => {
   isLoading.value = true

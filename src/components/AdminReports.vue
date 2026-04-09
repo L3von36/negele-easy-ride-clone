@@ -76,6 +76,7 @@
 <script setup>
 import { computed } from 'vue'
 import { store } from '../store.js'
+import { currentEthiopian } from '../lib/ethiopianCalendar.js'
 import {
   Chart as ChartJS,
   Title,
@@ -165,10 +166,12 @@ function exportReport() {
     + "Route,Revenue,Bookings\n"
     + sortedRouteStats.value.map(e => `${e.name},${e.revenue},${e.count}`).join("\n")
   
+  const et = currentEthiopian()
+  const dateStr = `${et.year}-${String(et.month).padStart(2, '0')}-${String(et.day).padStart(2, '0')}`
   const encodedUri = encodeURI(csvContent)
   const link = document.createElement("a")
   link.setAttribute("href", encodedUri)
-  link.setAttribute("download", `financial_report_${new Date().toISOString().slice(0,10)}.csv`)
+  link.setAttribute("download", `financial_report_${dateStr}.csv`)
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)

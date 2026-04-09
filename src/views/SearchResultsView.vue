@@ -112,7 +112,15 @@ const { setMeta } = useMeta()
 
 const from = computed(() => routeQuery.query.from || 'Addis Ababa')
 const to   = computed(() => routeQuery.query.to   || 'Hawassa')
-const date = computed(() => routeQuery.query.date || 'Today')
+const dateInitial = computed(() => routeQuery.query.date || 'Today')
+
+import { formatEthiopian } from '../lib/ethiopianCalendar.js'
+const dateDisplay = computed(() => {
+  const d = dateInitial.value === 'Today' ? new Date() : new Date(dateInitial.value)
+  return formatEthiopian(d, store, t)
+})
+// For internal logic/meta, we still use the searchable date or its display version where appropriate
+const date = dateDisplay // Use display version for the card UI
 
 onMounted(() => {
   const fromName = routeQuery.query.from ? t('cities.' + routeQuery.query.from) : from.value

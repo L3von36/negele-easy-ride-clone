@@ -36,11 +36,14 @@ import { Bar, Doughnut } from 'vue-chartjs'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement)
 
+import { getRecentEthiopianDates } from '../lib/ethiopianCalendar.js'
+import { t } from '../store.js'
+
 // Compute dynamic chart data based on store
 const revenueData = computed(() => {
-  // Mock recent days
+  const labels = getRecentEthiopianDates(6, store, t)
   return {
-    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Yesterday', 'Today'],
+    labels,
     datasets: [
       {
         label: 'Revenue',

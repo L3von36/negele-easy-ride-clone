@@ -58,41 +58,80 @@
               <transition name="screen" mode="out-in">
 
                 <!-- ====== SCREEN 0: Language Selection ====== -->
-                <div v-if="activeStep === 0" key="s-lang" class="absolute inset-0 bg-[#0F172A] flex flex-col items-center justify-center p-6 text-center">
-                   <div class="mb-6 animate-pulse">
-                     <div class="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center border-2 border-accent/40">
-                       <span class="text-4xl text-accent">🌍</span>
+                <div v-if="activeStep === 0" key="s-lang" class="absolute inset-0 bg-background flex flex-col">
+                   <!-- System Header Replica -->
+                   <div class="bg-[#0F172A] border-b border-white/10 px-3 py-3 flex items-center justify-between">
+                     <div class="flex items-center gap-2 min-w-0">
+                       <img src="/favicon.png" class="w-6 h-6 rounded-md object-cover border border-white/10" />
+                       <div class="flex flex-col min-w-0">
+                         <span class="text-white font-bold text-[9px] leading-tight truncate">{{ t('brand_name') }}</span>
+                         <span class="text-white/40 text-[6px] uppercase tracking-wider font-bold truncate">{{ t('brand_subtitle') }}</span>
+                       </div>
                      </div>
-                   </div>
-                   <h4 class="text-white font-black text-lg mb-2">{{ t('onboarding.step0_label') }}</h4>
-                   <p class="text-white/40 text-[10px] leading-relaxed mb-8">{{ t('onboarding.step0_full') }}</p>
-                   
-                   <div class="w-full space-y-3">
-                     <div v-for="l in ['English', 'አማርኛ', 'Afaan Oromo']" :key="l" 
-                       :class="['w-full py-3 rounded-2xl border font-bold text-xs transition-all duration-500 flex items-center justify-center gap-3', highlightEl === l ? 'bg-accent border-accent text-white shadow-lg scale-105' : 'bg-white/5 border-white/10 text-white/40']">
-                       {{ l }}
-                       <div v-if="highlightEl === l" class="w-2 h-2 rounded-full bg-white animate-ping"></div>
+                     <div class="flex items-center gap-2">
+                       <div :class="['relative transition-all duration-500', highlightEl === 'dropdown' ? 'scale-110' : '']">
+                         <div :class="['bg-white/5 text-white text-[8px] font-bold uppercase py-1.5 pl-2 pr-6 rounded-lg border transition-all duration-500', highlightEl === 'dropdown' ? 'border-accent bg-accent/20' : 'border-white/10']">
+                           {{ store.activeLang === 'en' ? 'EN' : store.activeLang === 'am' ? 'አማ' : 'OM' }}
+                         </div>
+                         <div class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                         </div>
+                       </div>
+                       <!-- Mock Hamburger -->
+                       <div class="w-7 h-7 bg-white/5 rounded-lg border border-white/10 flex flex-col items-center justify-center gap-0.5">
+                         <div class="w-3 h-0.5 bg-white/40 rounded-full"></div>
+                         <div class="w-3 h-0.5 bg-white/40 rounded-full"></div>
+                         <div class="w-3 h-0.5 bg-white/40 rounded-full"></div>
+                       </div>
                      </div>
                    </div>
 
-                   <!-- Mock Language Switcher in Header -->
-                   <div :class="['absolute top-8 right-4 px-3 py-1.5 rounded-xl border transition-all duration-500 flex items-center gap-2', highlightEl === 'dropdown' ? 'bg-accent border-accent text-white scale-110 shadow-lg' : 'bg-white/5 border-white/10 text-white/40']">
-                     <span class="text-[8px] font-black uppercase tracking-widest">{{ store.activeLang }}</span>
-                     <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                   <!-- App Content Placeholder -->
+                   <div class="flex-1 p-4 flex flex-col items-center justify-center text-center opacity-40">
+                      <div class="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4">
+                        <span class="text-3xl">🌍</span>
+                      </div>
+                      <div class="w-24 h-2 bg-white/10 rounded-full mb-2"></div>
+                      <div class="w-32 h-2 bg-white/10 rounded-full"></div>
                    </div>
+
+                   <!-- Detail Zoom (Shown during interaction) -->
+                   <transition name="screen">
+                     <div v-if="highlightEl === 'dropdown'" class="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6">
+                        <div class="bg-[#1E293B] w-full rounded-2xl border border-white/20 shadow-2xl p-4 animate-slide-down">
+                           <p class="text-[8px] font-black text-white/30 uppercase tracking-widest mb-3 px-1">{{ t('language') }}</p>
+                           <div class="space-y-2">
+                             <div v-for="(l, code) in {en: 'English (EN)', am: 'አማርኛ (አማ)', om: 'Afaan Oromo (OM)'}" :key="code"
+                               :class="['w-full py-2.5 px-3 rounded-xl border flex items-center justify-between transition-all duration-300', store.activeLang === code ? 'bg-accent/20 border-accent/40 text-white' : 'bg-white/5 border-white/10 text-white/40']">
+                               <span class="text-[10px] font-bold">{{ l }}</span>
+                               <div v-if="store.activeLang === code" class="w-2 h-2 rounded-full bg-accent"></div>
+                             </div>
+                           </div>
+                        </div>
+                     </div>
+                   </transition>
                 </div>
 
                 <!-- ====== SCREEN 1: Home Search ====== -->
                 <div v-else-if="activeStep === 1" key="s0" class="absolute inset-0 bg-background overflow-hidden">
-                  <!-- Mini header -->
-                  <div class="bg-[#0F172A] px-4 pt-8 pb-5" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.06) 1px, transparent 0); background-size: 16px 16px;">
-                    <div class="flex items-center gap-2 mb-3">
-                      <div class="w-5 h-5 rounded-md bg-accent/20 flex-shrink-0"></div>
-                      <span class="text-white font-black text-[9px] tracking-tight">{{ t('brand_name') }}</span>
-                      <div class="ml-auto bg-white/5 rounded-md px-1.5 py-0.5 text-white/40 text-[6px] font-black uppercase tracking-wider border border-white/10">{{ store.activeLang.toUpperCase() }}</div>
-                    </div>
-                    <p class="text-white font-black text-[11px] leading-tight">{{ t('travel') }} <span class="text-accent underline">{{ t('confidence') }}</span></p>
-                    <p class="text-white/50 text-[7px] mt-0.5">{{ t('subtext') }}</p>
+                  <!-- System Header Replica -->
+                  <div class="bg-[#0F172A] border-b border-white/10 px-3 py-3 flex items-center justify-between mb-4">
+                     <div class="flex items-center gap-2 min-w-0">
+                       <img src="/favicon.png" class="w-6 h-6 rounded-md object-cover border border-white/10" />
+                       <div class="flex flex-col min-w-0">
+                         <span class="text-white font-bold text-[9px] leading-tight truncate">{{ t('brand_name') }}</span>
+                         <span class="text-white/40 text-[6px] uppercase tracking-wider font-bold truncate">{{ t('brand_subtitle') }}</span>
+                       </div>
+                     </div>
+                     <div class="flex items-center gap-2">
+                       <div class="bg-white/10 text-white/50 text-[7px] font-black uppercase px-2 py-0.5 rounded-md border border-white/10">
+                         {{ store.activeLang.toUpperCase() }}
+                       </div>
+                       <div class="w-7 h-7 bg-white/5 rounded-lg border border-white/10 flex flex-col items-center justify-center gap-0.5 opacity-30">
+                         <div class="w-3 h-0.5 bg-white/40 rounded-full"></div>
+                         <div class="w-3 h-0.5 bg-white/40 rounded-full"></div>
+                       </div>
+                     </div>
                   </div>
 
                   <!-- Search card -->
@@ -114,7 +153,7 @@
                     <!-- Date -->
                     <div :class="['rounded-xl p-2.5 border mb-2 transition-all duration-500', highlightEl === 'date' ? 'border-orange-400 bg-orange-50 shadow-md shadow-orange-100' : 'border-gray-200 bg-gray-50']">
                       <p class="text-[6px] font-black text-gray-400 uppercase tracking-widest">{{ t('date') }}</p>
-                      <p class="text-[9px] font-bold text-gray-800 mt-0.5">Apr 10, 2026</p>
+                      <p class="text-[9px] font-bold text-gray-800 mt-0.5">{{ formatEthiopian(new Date('2026-04-10'), store, t) }}</p>
                     </div>
                     <!-- Search btn -->
                     <div :class="['w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest text-center transition-all duration-500', highlightEl === 'search' ? 'bg-accent text-white scale-105 shadow-lg shadow-orange-300' : 'bg-gray-900 text-white']">
@@ -137,11 +176,11 @@
                 <!-- ====== SCREEN 2: Bus Results + Seat Selector ====== -->
                 <div v-else-if="activeStep === 2" key="s1" class="absolute inset-0 bg-background overflow-hidden">
                   <!-- Header -->
-                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2">
+                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2 border-b border-white/10">
                     <div class="w-5 h-5 rounded-lg bg-white/10 flex items-center justify-center">
                       <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </div>
-                    <span class="text-white font-black text-[9px]">Negele → Addis Ababa</span>
+                    <span class="text-white font-black text-[9px] truncate">{{ t('cities.negele-borena') }} → {{ t('cities.addis-ababa') }}</span>
                   </div>
 
                   <div class="px-3 py-2 overflow-hidden">
@@ -178,11 +217,11 @@
                 <!-- ====== SCREEN 3: Seat Map ====== -->
                 <div v-else-if="activeStep === 3" key="s2" class="absolute inset-0 bg-background overflow-hidden">
                   <!-- Header -->
-                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2">
+                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2 border-b border-white/10">
                     <div class="w-5 h-5 rounded-lg bg-white/10 flex items-center justify-center">
                       <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </div>
-                    <span class="text-white font-black text-[9px]">{{ t('onboarding.step2_label') }}</span>
+                    <span class="text-white font-black text-[9px] truncate">{{ t('onboarding.step3_label') }}</span>
                   </div>
 
                   <div class="px-3 pt-2">
@@ -228,11 +267,11 @@
                 <!-- ====== SCREEN 4: Boarding Pass + QR ====== -->
                 <div v-else-if="activeStep === 4" key="s3" class="absolute inset-0 bg-background overflow-hidden">
                   <!-- Header -->
-                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2">
+                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2 border-b border-white/10">
                     <div class="w-5 h-5 rounded-lg bg-white/10 flex items-center justify-center">
                       <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </div>
-                    <span class="text-white font-black text-[9px]">{{ t('confirmed') }}</span>
+                    <span class="text-white font-black text-[9px] truncate">{{ t('onboarding.step4_label') }}</span>
                   </div>
 
                   <div class="px-4 pt-3 flex flex-col items-center">
@@ -367,6 +406,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { store, t } from '../store.js'
+import { formatEthiopian } from '../lib/ethiopianCalendar.js'
 
 const steps = computed(() => [
   {
@@ -398,11 +438,11 @@ const steps = computed(() => [
     tips: [t('onboarding.step3_tip1'), t('onboarding.step3_tip2'), t('onboarding.step3_tip3')]
   },
   {
-    label: t('onboarding.step3_label'),
+    label: t('onboarding.step4_label'),
     icon: '🎟️',
-    desc: t('onboarding.step3_desc'),
-    full: t('onboarding.step3_full'),
-    tips: [t('onboarding.step3_tip1'), t('onboarding.step3_tip2'), t('onboarding.step3_tip3')]
+    desc: t('onboarding.step4_desc'),
+    full: t('onboarding.step4_full'),
+    tips: [t('onboarding.step4_tip1'), t('onboarding.step4_tip2'), t('onboarding.step4_tip3')]
   },
 ])
 
@@ -444,6 +484,7 @@ const qrPattern = [
 const ticketDetails = computed(() => [
   { label: t('passenger'), val: 'Abebe Girma' },
   { label: t('phone'), val: '0912 345 678' },
+  { label: t('date'), val: formatEthiopian(new Date('2026-04-10'), store, t) },
   { label: t('seat'), val: '#5' },
   { label: t('bus'), val: `${t('brand_name')} Express` },
 ])
@@ -497,11 +538,26 @@ function runStepLang() {
   clearTimer()
   timer = setInterval(() => {
     seq = (seq + 1) % 4
-    if (seq === 0) { highlightEl.value = 'dropdown'; mascotSpeech.value = t('onboarding.step0_tip1'); tap('10%', '85%') }
-    if (seq === 1) { highlightEl.value = 'English'; mascotSpeech.value = 'English 🇬🇧'; tap('45%', '50%') }
-    if (seq === 2) { highlightEl.value = 'አማርኛ'; mascotSpeech.value = 'አማርኛ 🇪🇹'; tap('55%', '50%') }
-    if (seq === 3) { highlightEl.value = 'Afaan Oromo'; mascotSpeech.value = 'Afaan Oromo 🇪🇹'; tap('65%', '50%') }
-  }, 2000)
+    if (seq === 0) { 
+      highlightEl.value = ''
+      mascotSpeech.value = t('onboarding.mascot_lang')
+    }
+    if (seq === 1) { 
+      highlightEl.value = 'dropdown'
+      mascotSpeech.value = t('onboarding.step0_tip1')
+      tap('10%', '85%') 
+    }
+    if (seq === 2) { 
+      highlightEl.value = 'dropdown'
+      mascotSpeech.value = 'English, አማርኛ, Afaan Oromo...' 
+      tap('45%', '50%') 
+    }
+    if (seq === 3) { 
+      highlightEl.value = ''
+      mascotSpeech.value = t('onboarding.step0_tip2')
+      mascotBounce.value = true
+    }
+  }, 2500)
 }
 
 function runStep0() {

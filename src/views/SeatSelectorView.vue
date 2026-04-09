@@ -113,14 +113,19 @@ const from      = computed(() => route.query.from   || 'Negele Borena')
 const to        = computed(() => route.query.to     || 'Hawassa')
 const depart    = computed(() => route.query.depart || '06:00')
 const arrive    = computed(() => route.query.arrive || '11:45')
-const date      = computed(() => route.query.date   || t('date'))
+import { formatEthiopian } from '../lib/ethiopianCalendar.js'
+const dateInitial = computed(() => route.query.date || new Date().toISOString().split('T')[0])
+const dateDisplay = computed(() => formatEthiopian(new Date(dateInitial.value), store, t))
+
+const date = dateDisplay // Use display version for the template
+
 const routeId   = computed(() => route.query.routeId || 'R2')
 const totalSeats = 44
 
 // Get taken seats from live bookings (real-time from Supabase) + admin-blocked seats
 const takenSeats = computed(() => {
   const routeStr = `${from.value} → ${to.value}`
-  const dateStr = date.value
+  const dateStr = dateInitial.value // Use Gregorian for filtering logic
 
   // Seats taken by confirmed bookings on this exact route + date
   const bookedSeats = store.bookings
