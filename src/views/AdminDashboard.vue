@@ -346,24 +346,24 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-text-primary">{{ bus.plate }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{{ bus.capacity }} seats</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <select 
-                        :value="bus.route_id" 
+                      <select
+                        :value="bus.route_id ?? ''"
                         @change="(e) => store.assignRouteToBus(bus.id, e.target.value)"
                         class="text-xs bg-white border border-border rounded px-2 py-1 focus:ring-1 focus:ring-accent outline-none"
                       >
-                        <option :value="null">Unassigned</option>
+                        <option value="">Unassigned</option>
                         <option v-for="r in store.routes" :key="r.id" :value="r.id">
                           {{ r.from }} → {{ r.to }}
                         </option>
                       </select>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <select 
-                        :value="bus.driver_id" 
+                      <select
+                        :value="bus.driver_id ?? ''"
                         @change="(e) => store.assignDriverToBus(bus.id, e.target.value)"
                         class="text-xs bg-white border border-border rounded px-2 py-1 focus:ring-1 focus:ring-accent outline-none w-full max-w-[150px]"
                       >
-                        <option :value="null">Unassigned</option>
+                        <option value="">Unassigned</option>
                         <option v-for="d in store.drivers" :key="d.id" :value="d.id">
                           {{ d.full_name || d.email }}
                         </option>

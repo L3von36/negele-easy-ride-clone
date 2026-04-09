@@ -648,13 +648,17 @@ export const store = reactive({
   },
 
   async assignRouteToBus(busId, routeId) {
-    const { error } = await supabase.from('buses').update({ route_id: routeId }).eq('id', busId)
+    // e.target.value is always a string; empty string means "Unassigned" → send null
+    const value = routeId || null
+    const { error } = await supabase.from('buses').update({ route_id: value }).eq('id', busId)
     if (error) console.error('Error assigning route to bus:', error)
     else await this.fetchBuses()
   },
 
   async assignDriverToBus(busId, driverId) {
-    const { error } = await supabase.from('buses').update({ driver_id: driverId }).eq('id', busId)
+    // e.target.value is always a string; empty string means "Unassigned" → send null
+    const value = driverId || null
+    const { error } = await supabase.from('buses').update({ driver_id: value }).eq('id', busId)
     if (error) console.error('Error assigning driver to bus:', error)
     else await this.fetchBuses()
   },
