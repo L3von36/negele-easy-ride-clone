@@ -118,16 +118,20 @@ const isFormValid = computed(() => {
 function confirmBooking() {
   if (!fullName.value || !phone.value) return
   
-  // Create booking record in Supabase
   const newBookingId = String(Math.floor(1000 + Math.random() * 9000))
+  
+  // Use same route format as SeatSelectorView for accurate seat occupancy checks
+  const routeStr = `${from.value} → ${to.value}`
+  const dateStr = date.value
+
   store.addBooking({
     id: newBookingId,
     name: fullName.value,
     phone: phone.value,
-    route: `${from.value} → ${to.value}`,
-    date: date.value + ', ' + depart.value,
+    route: routeStr,
+    date: dateStr + ', ' + depart.value,
     amount: Number(price.value),
-    seat_number: seat.value,
+    seat_number: Number(seat.value),
     status: 'Confirmed',
     boarded: false
   })

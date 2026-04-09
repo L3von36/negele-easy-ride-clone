@@ -34,8 +34,6 @@
       <!-- Center: Desktop Nav Links -->
       <nav class="hidden md:flex items-center space-x-8">
         <router-link to="/" class="text-sm font-medium text-white/70 hover:text-white transition-colors">{{ t('nav.home') }}</router-link>
-        <router-link to="/driver" class="text-sm font-medium text-white/70 hover:text-white transition-colors">{{ t('nav.driver_portal') }}</router-link>
-        <router-link to="/admin-login" class="text-sm font-medium text-white/70 hover:text-white transition-colors">{{ t('nav.admin_portal') }}</router-link>
       </nav>
 
       <!-- Right: Language Switcher Dropdown & Mobile Menu Button -->
@@ -116,9 +114,7 @@ const isMenuOpen = ref(false)
 const isScrolled = ref(false)
 
 const navLinks = computed(() => [
-  { name: t('nav.home'), path: '/' },
-  { name: t('nav.driver_portal'), path: '/driver' },
-  { name: t('nav.admin_portal'), path: '/admin-login' }
+  { name: t('nav.home'), path: '/' }
 ])
 
 const handleScroll = () => {

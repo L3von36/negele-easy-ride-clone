@@ -117,16 +117,26 @@ const date      = computed(() => route.query.date   || t('date'))
 const routeId   = computed(() => route.query.routeId || 'R2')
 const totalSeats = 44
 
-// Get taken seats from store (admin blocked) + some mock stable taken seats
+// Get taken seats from live bookings (real-time from Supabase) + admin-blocked seats
 const takenSeats = computed(() => {
-  const baseTaken = [3, 7, 19, 30, 41]
-  if (!routeId.value) return baseTaken
-  
+  const routeStr = `${from.value} → ${to.value}`
+  const dateStr = date.value
+
+  // Seats taken by confirmed bookings on this exact route + date
+  const bookedSeats = store.bookings
+    .filter(b => 
+      b.status === 'Confirmed' &&
+      b.route === routeStr &&
+      b.date?.startsWith(dateStr)
+    )
+    .map(b => Number(b.seat_number))
+    .filter(Boolean)
+
+  // Also include admin-blocked seats from route config
   const targetRoute = store.routes.find(r => r.id === routeId.value)
-  if (!targetRoute || !targetRoute.blockedSeats) return baseTaken
-  
-  // Combine mock taken with actual admin-blocked seats
-  return [...new Set([...baseTaken, ...targetRoute.blockedSeats])]
+  const adminBlocked = targetRoute?.blockedSeats || []
+
+  return [...new Set([...bookedSeats, ...adminBlocked])]
 })
 
 const selectedSeat = ref(null)

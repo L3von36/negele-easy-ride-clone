@@ -98,6 +98,9 @@
       </div>
     </section>
 
+    <!-- Animated Onboarding Guide -->
+    <OnboardingGuide />
+
     <!-- Why Choose Us -->
     <section class="px-4 sm:px-6 pb-20 max-w-7xl mx-auto animate-fade-in">
       <h3 class="text-lg sm:text-2xl font-bold text-text-primary mb-6 sm:mb-10 text-center">{{ t('features_title') }}</h3>
@@ -156,6 +159,7 @@ import { store, t } from '../store.js'
 import { useMeta } from '../lib/useMeta.js'
 import MainHeader from '../components/MainHeader.vue'
 import AppButton from '../components/AppButton.vue'
+import OnboardingGuide from '../components/OnboardingGuide.vue'
 
 const router = useRouter()
 const { setMeta } = useMeta()
