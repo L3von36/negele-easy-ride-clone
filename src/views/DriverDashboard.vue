@@ -1,6 +1,19 @@
 <template>
   <div class="min-h-screen bg-[#0F172A] overflow-x-hidden">
 
+    <!-- Toast Notification -->
+    <transition name="toast">
+      <div
+        v-if="toastMessage"
+        :class="toastType === 'error' ? 'bg-red-500/20 border-red-500/30 text-red-300' : 'bg-green-500/20 border-green-500/30 text-green-300'"
+        class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-3 px-5 py-3 rounded-2xl border backdrop-blur-sm shadow-lg"
+      >
+        <svg v-if="toastType === 'success'" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        <svg v-else class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/></svg>
+        <span class="text-sm font-medium">{{ toastMessage }}</span>
+      </div>
+    </transition>
+
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 px-6 py-4 bg-[#0F172A] border-b border-white/10">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -15,6 +28,13 @@
         </div>
 
         <div class="flex items-center gap-3">
+          <!-- Driver Name Badge -->
+          <div v-if="store.userProfile?.full_name" class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl">
+            <div class="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center">
+              <span class="text-accent text-[8px] font-bold">{{ store.userProfile.full_name.charAt(0) }}</span>
+            </div>
+            <span class="text-white/60 text-[10px] font-medium">{{ store.userProfile.full_name }}</span>
+          </div>
           <div class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl flex items-center gap-2">
             <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
             <span class="text-white/50 text-[10px] font-medium uppercase tracking-wide">{{ formatEthiopian(new Date(), store, t) }}</span>
@@ -33,12 +53,22 @@
         <!-- LEFT: Trip Info & Actions -->
         <div class="lg:col-span-4 space-y-4 lg:sticky lg:top-24">
 
+          <!-- No Bus Assigned State -->
+          <section v-if="!store.driverBus" class="bg-white/[0.04] border border-white/10 rounded-2xl p-8 text-center">
+            <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg class="w-7 h-7 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-white/60 text-sm font-semibold">No Bus Assigned</h3>
+            <p class="text-white/30 text-xs mt-2 leading-relaxed">Contact dispatch to get assigned to a bus and route.</p>
+          </section>
+
           <!-- Trip Summary Card -->
           <section v-if="store.driverBus" class="bg-white/[0.04] border border-white/10 rounded-2xl p-6">
             <div class="flex justify-between items-start mb-6">
               <div>
-                <p class="text-white/40 text-[10px] font-medium uppercase tracking-widest mb-1">Assigned Plate</p>
-                <h2 class="text-white text-3xl font-bold tracking-tight">{{ store.driverBus?.plate }}</h2>
+                <p class="text-white/40 text-[10px] font-medium uppercase tracking-widest mb-1">Assigned Bus</p>
+                <h2 class="text-white text-3xl font-bold tracking-tight">{{ store.driverBus.plate }}</h2>
+                <p v-if="store.driverBus.capacity" class="text-white/30 text-xs mt-1">{{ store.driverBus.capacity }} seats</p>
               </div>
               <div :class="tripStatusClass" class="text-[10px] font-semibold px-3 py-1.5 rounded-lg uppercase tracking-wide">
                 {{ tripStatusText }}
@@ -49,8 +79,11 @@
             <div class="bg-black/20 rounded-xl p-4 border border-white/5 space-y-3">
               <div class="flex justify-between items-end">
                 <div>
-                  <p class="text-white/40 text-[10px] font-medium uppercase tracking-widest mb-1">{{ t('boarding_progress') }}</p>
-                  <p class="text-white text-xl font-bold">{{ boardedCount }} <span class="text-white/30 text-sm font-medium">/ {{ manifestoCount }}</span></p>
+                  <p class="text-white/40 text-[10px] font-medium uppercase tracking-widest mb-1">Boarding Progress</p>
+                  <p class="text-white text-xl font-bold">
+                    {{ boardedCount }}
+                    <span class="text-white/30 text-sm font-medium"> / {{ manifestoCount }}</span>
+                  </p>
                 </div>
                 <p class="text-accent text-base font-bold">{{ boardingPercentage }}%</p>
               </div>
@@ -63,27 +96,45 @@
             <div v-if="assignedRoute" class="mt-5 flex items-center justify-between">
               <div>
                 <p class="text-white/40 text-[10px] font-medium uppercase tracking-widest mb-1">{{ t('departure') }}</p>
-                <p class="text-white text-sm font-semibold uppercase">{{ assignedRoute.from_city }}</p>
+                <p class="text-white text-sm font-semibold">{{ assignedRoute.from_city }}</p>
               </div>
-              <div class="h-px flex-1 mx-4 bg-white/10"></div>
+              <svg class="w-4 h-4 text-white/20 mx-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
               <div class="text-right">
                 <p class="text-white/40 text-[10px] font-medium uppercase tracking-widest mb-1">{{ t('destination') }}</p>
-                <p class="text-white text-sm font-semibold uppercase">{{ assignedRoute.to_city }}</p>
+                <p class="text-white text-sm font-semibold">{{ assignedRoute.to_city }}</p>
               </div>
+            </div>
+            <div v-else class="mt-5 flex items-center gap-2 p-3 bg-white/[0.03] border border-white/5 rounded-xl">
+              <svg class="w-4 h-4 text-white/20 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+              <p class="text-white/30 text-xs">No route assigned yet</p>
             </div>
           </section>
 
           <!-- Action Buttons -->
           <section v-if="store.driverBus" class="grid grid-cols-2 gap-3">
-            <!-- Scan Ticket (Primary) -->
+            <!-- Scan Ticket -->
             <button @click="isScannerOpen = true" class="col-span-2 flex items-center justify-center gap-2 p-4 bg-accent hover:bg-orange-600 text-white rounded-2xl transition-colors active:scale-[0.98]">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 8h12m4 12h2" /></svg>
               <span class="text-sm font-bold uppercase tracking-wide">Scan Ticket</span>
             </button>
 
-            <button @click="startTrip" :disabled="busStatus === 'On Route'" class="driver-btn group">
+            <!-- Depart / End Trip toggle -->
+            <button
+              v-if="busStatus !== 'On Route'"
+              @click="confirmDepart"
+              :disabled="!assignedRoute"
+              class="driver-btn group"
+            >
               <svg class="w-4 h-4 text-white/30 group-hover:text-white/80 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 9-14 9V3z"/></svg>
               <span class="text-white/40 group-hover:text-white/80 text-[11px] font-medium uppercase tracking-wide transition-colors">Depart</span>
+            </button>
+            <button
+              v-else
+              @click="endTrip"
+              class="driver-btn group border-green-500/20 hover:bg-green-500/10 hover:border-green-500/30"
+            >
+              <svg class="w-4 h-4 text-green-500/50 group-hover:text-green-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-green-500/50 group-hover:text-green-400 text-[11px] font-medium uppercase tracking-wide transition-colors">Arrived</span>
             </button>
 
             <button @click="openChat" class="driver-btn group">
@@ -101,7 +152,7 @@
         <!-- RIGHT: Passenger Manifest -->
         <div class="lg:col-span-8 space-y-4">
           <div class="flex items-center justify-between px-1">
-            <h3 class="text-white/40 font-medium text-xs uppercase tracking-widest">{{ t('passenger_manifest') }}</h3>
+            <h3 class="text-white/40 font-medium text-xs uppercase tracking-widest">Passenger Manifest</h3>
             <div class="flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-lg">
               <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
               <span class="text-white/30 text-[10px] font-medium uppercase tracking-wide">Real-time Sync</span>
@@ -117,17 +168,48 @@
               compact
             />
 
-            <div v-else class="p-24 text-center">
-              <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div v-else class="flex flex-col items-center justify-center py-24 text-center px-6">
+              <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-5">
                 <svg class="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               </div>
-              <h4 class="text-white/30 text-sm font-semibold uppercase tracking-widest">Awaiting Assignment</h4>
-              <p class="text-white/20 text-xs mt-2">The manifest will appear once a route is assigned to your bus.</p>
+              <h4 class="text-white/40 text-sm font-semibold uppercase tracking-widest">Awaiting Assignment</h4>
+              <p class="text-white/20 text-xs mt-2 max-w-xs">The passenger manifest will appear once a route is assigned to your bus by dispatch.</p>
             </div>
           </div>
         </div>
       </div>
     </main>
+
+    <!-- Depart Confirmation Modal -->
+    <div v-if="isDepartConfirmOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-6">
+      <div class="bg-[#1E293B] border border-white/10 rounded-2xl p-7 text-center space-y-5 max-w-sm w-full">
+        <div class="w-14 h-14 bg-accent/10 border border-accent/20 rounded-2xl mx-auto flex items-center justify-center">
+          <svg class="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 9-14 9V3z"/></svg>
+        </div>
+        <div>
+          <h2 class="text-white text-lg font-bold">Depart Now?</h2>
+          <p class="text-white/40 text-sm mt-1">
+            {{ boardedCount }} of {{ manifestoCount }} passengers boarded
+            <span v-if="manifestoCount > 0 && boardedCount < manifestoCount" class="block text-yellow-400/70 text-xs mt-1">
+              {{ manifestoCount - boardedCount }} passenger(s) not yet boarded
+            </span>
+          </p>
+        </div>
+        <div v-if="assignedRoute" class="flex items-center justify-center gap-2 py-2 px-4 bg-white/5 rounded-xl border border-white/5">
+          <span class="text-white/60 text-sm">{{ assignedRoute.from_city }}</span>
+          <svg class="w-3 h-3 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          <span class="text-white/60 text-sm">{{ assignedRoute.to_city }}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <button @click="isDepartConfirmOpen = false" class="bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-medium text-sm transition-colors">
+            Cancel
+          </button>
+          <button @click="startTrip" class="bg-accent hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-sm transition-colors uppercase tracking-wide">
+            Depart
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- SOS Countdown Modal -->
     <div v-if="sosCountdown > 0" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-6">
@@ -148,41 +230,53 @@
     <!-- Hub Chat Sidebar -->
     <div
       :class="isChatOpen ? 'translate-x-0' : 'translate-x-full'"
-      class="fixed top-0 right-0 h-full w-full sm:w-[380px] z-[100] bg-[#0F172A] border-l border-white/10 transition-transform duration-300 ease-in-out"
+      class="fixed top-0 right-0 h-full w-full sm:w-[380px] z-[100] bg-[#0F172A] border-l border-white/10 transition-transform duration-300 ease-in-out flex flex-col"
     >
-      <div class="h-full flex flex-col">
-        <div class="p-5 border-b border-white/10 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-              <svg class="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-            </div>
-            <div>
-              <h3 class="text-white font-semibold text-sm leading-none">Dispatch Hub</h3>
-              <span class="text-green-400 text-[10px] font-medium uppercase tracking-wide">Connected</span>
-            </div>
+      <!-- Chat Header -->
+      <div class="p-5 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
           </div>
-          <button @click="isChatOpen = false" class="text-white/30 hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          <div>
+            <h3 class="text-white font-semibold text-sm leading-none">Dispatch Hub</h3>
+            <span class="text-green-400 text-[10px] font-medium uppercase tracking-wide">Connected</span>
+          </div>
+        </div>
+        <button @click="isChatOpen = false" class="text-white/30 hover:text-white transition-colors p-1.5 hover:bg-white/5 rounded-lg">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Chat Messages -->
+      <div ref="chatScrollRef" class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
+        <div v-for="msg in chatMessages" :key="msg.id" :class="msg.isMe ? 'items-end' : 'items-start'" class="flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-white/30 uppercase tracking-wide">{{ msg.sender }}</span>
+          <div :class="msg.isMe ? 'bg-accent/10 border-accent/20' : 'bg-white/5 border-white/10'" class="max-w-[80%] px-4 py-3 rounded-xl border">
+            <p class="text-white/70 text-sm leading-relaxed">{{ msg.text }}</p>
+          </div>
+          <span class="text-[10px] text-white/20">{{ msg.time }}</span>
+        </div>
+        <div ref="chatEndRef"></div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="p-5 border-t border-white/10 shrink-0">
+        <div class="relative">
+          <input
+            v-model="newMessage"
+            @keydown.enter.prevent="sendMessage"
+            type="text"
+            placeholder="Message dispatch..."
+            class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-4 pr-12 text-sm text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/30"
+          />
+          <button
+            @click="sendMessage"
+            :disabled="!newMessage.trim()"
+            class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white hover:bg-orange-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
           </button>
-        </div>
-
-        <div class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
-          <div v-for="msg in chatMessages" :key="msg.id" :class="msg.isMe ? 'items-end' : 'items-start'" class="flex flex-col gap-1">
-            <span class="text-[10px] font-medium text-white/30 uppercase tracking-wide">{{ msg.sender }}</span>
-            <div :class="msg.isMe ? 'bg-accent/10 border-accent/20' : 'bg-white/5 border-white/10'" class="max-w-[80%] px-4 py-3 rounded-xl border">
-              <p class="text-white/70 text-sm leading-relaxed">{{ msg.text }}</p>
-            </div>
-            <span class="text-[10px] text-white/20">{{ msg.time }}</span>
-          </div>
-        </div>
-
-        <div class="p-5 border-t border-white/10">
-          <div class="relative">
-            <input type="text" placeholder="Message dispatch..." class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-4 pr-12 text-sm text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-accent/50 focus:border-accent/30" />
-            <button class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-white hover:bg-orange-600 transition-colors">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -197,7 +291,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { store, t } from '../store.js'
 import PassengerManifest from '../components/PassengerManifest.vue'
@@ -207,24 +301,67 @@ import { formatEthiopian } from '../lib/ethiopianCalendar.js'
 const router = useRouter()
 const isScannerOpen = ref(false)
 const isChatOpen = ref(false)
+const isDepartConfirmOpen = ref(false)
 const sosCountdown = ref(0)
+const newMessage = ref('')
+const chatEndRef = ref(null)
+const chatScrollRef = ref(null)
 let sosTimer = null
+let toastTimer = null
 
+// Toast
+const toastMessage = ref('')
+const toastType = ref('success')
+
+function showToast(message, type = 'success') {
+  toastMessage.value = message
+  toastType.value = type
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => { toastMessage.value = '' }, 3500)
+}
+
+// Chat
 const chatMessages = ref([
-  { id: 1, sender: 'Dispatch', text: 'Good morning Ahmed. Traffic clear on Route 4. Proceed with scheduled departure.', time: '07:45 AM', isMe: false },
-  { id: 2, sender: 'Driver (Me)', text: 'Acknowledged. Vehicle inspection complete. Ready for boarding.', time: '08:02 AM', isMe: true }
+  { id: 1, sender: 'Dispatch', text: 'Good morning. Traffic is clear on Route 4. Proceed with scheduled departure.', time: '07:45 AM', isMe: false },
+  { id: 2, sender: 'You', text: 'Acknowledged. Vehicle inspection complete. Ready for boarding.', time: '08:02 AM', isMe: true }
 ])
 
+function sendMessage() {
+  const text = newMessage.value.trim()
+  if (!text) return
+  chatMessages.value.push({
+    id: Date.now(),
+    sender: 'You',
+    text,
+    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    isMe: true
+  })
+  newMessage.value = ''
+  nextTick(() => {
+    chatEndRef.value?.scrollIntoView({ behavior: 'smooth' })
+  })
+}
+
+function openChat() {
+  isChatOpen.value = true
+  nextTick(() => {
+    chatEndRef.value?.scrollIntoView({ behavior: 'instant' })
+  })
+}
+
+// Trip data
 const assignedRoute = computed(() => store.driverBus?.routes)
 const busStatus = computed(() => store.driverBus?.status || 'Active')
 
 const tripStatusText = computed(() => {
   if (busStatus.value === 'On Route') return 'In Transit'
-  return 'Ready for Duty'
+  if (busStatus.value === 'Arrived') return 'Arrived'
+  return 'Ready'
 })
 
 const tripStatusClass = computed(() => {
   if (busStatus.value === 'On Route') return 'bg-green-500/10 text-green-400 border border-green-500/20'
+  if (busStatus.value === 'Arrived') return 'bg-white/10 text-white/50 border border-white/10'
   return 'bg-accent/10 text-accent border border-accent/20'
 })
 
@@ -255,13 +392,31 @@ const boardingPercentage = computed(() => {
   return Math.round((boardedCount.value / manifestoCount.value) * 100)
 })
 
+// Actions
 function onTicketScanned(ticketId) {
-  console.log('Successfully boarded ticket:', ticketId)
+  const booking = store.bookings.find(b => b.id === ticketId)
+  if (booking) {
+    showToast(`${booking.name} — Seat ${booking.seat_number || '?'} boarded`, 'success')
+  } else {
+    showToast('Ticket not recognised', 'error')
+  }
+}
+
+function confirmDepart() {
+  isDepartConfirmOpen.value = true
 }
 
 function startTrip() {
   if (!store.driverBus?.id) return
+  isDepartConfirmOpen.value = false
   store.updateBusStatus(store.driverBus.id, 'On Route')
+  showToast('Trip started — safe travels!', 'success')
+}
+
+function endTrip() {
+  if (!store.driverBus?.id) return
+  store.updateBusStatus(store.driverBus.id, 'Arrived')
+  showToast('Trip marked as arrived', 'success')
 }
 
 function cancelSOS() {
@@ -275,14 +430,10 @@ function triggerSOS() {
     sosCountdown.value--
     if (sosCountdown.value <= 0) {
       clearInterval(sosTimer)
-      alert("EMERGENCY SIGNAL SENT TO DISPATCH")
+      alert('EMERGENCY SIGNAL SENT TO DISPATCH')
       sosCountdown.value = 0
     }
   }, 1000)
-}
-
-function openChat() {
-  isChatOpen.value = true
 }
 
 async function handleSignOut() {
@@ -303,22 +454,17 @@ async function handleSignOut() {
   border-radius: 1rem;
   transition: all 0.15s;
 }
-
 .driver-btn:hover {
   background-color: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.15);
 }
-
-.driver-btn:active {
-  transform: scale(0.98);
-}
-
-.driver-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
+.driver-btn:active { transform: scale(0.98); }
+.driver-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+
+.toast-enter-active, .toast-leave-active { transition: all 0.3s ease; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, -16px); }
 </style>
