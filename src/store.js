@@ -481,44 +481,27 @@ export const store = reactive({
   },
 
   async signIn(email, password) {
-    // Demo Bypass Logic
-    if (email === 'admin@negele.bus' && password === 'admin123') {
-      const adminId = '11111111-1111-1111-1111-111111111111'
-      this.user = { id: adminId, email: 'admin@negele.bus' }
-      this.userProfile = { id: adminId, full_name: 'System Administrator', role: 'admin' }
-      this.isAuthenticated = true
-      return { user: this.user }
-    }
-    if (email === 'ahmed@easyride.et' && password === 'driver123') {
-      const driverId = '22222222-2222-2222-2222-222222222222'
-      this.user = { id: driverId, email: 'ahmed@easyride.et' }
-      this.userProfile = { id: driverId, full_name: 'Ahmed Yusuf', role: 'driver' }
-      this.isAuthenticated = true
-      // Try real fetch first, fall back to demo bus if Supabase unavailable
-      await this.fetchDriverBus().catch(() => {})
-      if (!this.driverBus) {
-        // Demo fallback bus so the driver portal is testable
-        const demoRoute = this.routes[0] || null
-        this.driverBus = {
-          id: 'demo-bus-001',
-          plate: 'AA-1234',
-          capacity: 45,
-          status: 'Active',
-          driver_id: driverId,
-          route_id: demoRoute?.id || null,
-          routes: demoRoute ? { ...demoRoute, from: demoRoute.from_city, to: demoRoute.to_city } : null
-        }
-      }
-      return { user: this.user }
-    }
-
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
-    if (data.user) {
-      this.user = data.user
-      this.isAuthenticated = true
-      await this.fetchProfile(data.user.id)
+
+    this.user = data.user
+    this.isAuthenticated = true
+
+    // Load the user's profile (role, full_name, etc.)
+    await this.fetchProfile(data.user.id)
+
+    if (!this.userProfile) {
+      // Auth succeeded but no profile row exists — misconfigured account
+      this.user = null
+      this.isAuthenticated = false
+      throw new Error('Account setup incomplete. Contact your administrator.')
     }
+
+    // Load driver-specific data
+    if (this.userProfile.role === 'driver') {
+      await this.fetchDriverBus().catch(() => {})
+    }
+
     return data
   },
 

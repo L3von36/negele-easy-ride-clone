@@ -69,12 +69,12 @@
           </button>
         </form>
 
-        <!-- Demo Mode -->
+        <!-- Quick Fill (test accounts) -->
         <div class="mt-6 pt-5 border-t border-white/10">
-          <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest text-center mb-3">Demo Access</p>
+          <p class="text-white/20 text-[10px] font-semibold uppercase tracking-widest text-center mb-3">Quick Fill</p>
           <div class="grid grid-cols-2 gap-2">
             <button
-              @click="loginAsDemo('admin')"
+              @click="fillDemo('admin')"
               type="button"
               :disabled="isLoading"
               class="flex flex-col items-center gap-1.5 py-3 px-2 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 rounded-xl transition-all disabled:opacity-40"
@@ -83,7 +83,7 @@
               <span class="text-white/60 text-[10px] font-semibold uppercase tracking-wide">Admin</span>
             </button>
             <button
-              @click="loginAsDemo('driver')"
+              @click="fillDemo('driver')"
               type="button"
               :disabled="isLoading"
               class="flex flex-col items-center gap-1.5 py-3 px-2 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/20 rounded-xl transition-all disabled:opacity-40"
@@ -121,27 +121,44 @@ async function handleSubmit() {
     await store.signIn(email.value, password.value)
     redirectByRole()
   } catch (err) {
-    authError.value = err.message || 'Invalid credentials. Please try again.'
+    authError.value = mapError(err)
   } finally {
     isLoading.value = false
   }
+}
+
+// Just pre-fills the form — user still clicks Sign In
+function fillDemo(role) {
+  authError.value = ''
+  if (role === 'admin') {
+    email.value = 'admin@negele.bus'
+    password.value = 'admin123'
+  } else {
+    email.value = 'ahmed@easyride.et'
+    password.value = 'driver123'
+  }
+}
+
+function mapError(err) {
+  const msg = err?.message || ''
+  if (msg.includes('Invalid login credentials')) return 'Incorrect email or password.'
+  if (msg.includes('Email not confirmed')) return 'Please confirm your email before signing in.'
+  if (msg.includes('setup incomplete')) return msg
+  if (msg.includes('Legacy API') || err?.status === 401) {
+    return 'Service configuration error. Check your Supabase API key.'
+  }
+  return msg || 'Sign in failed. Please try again.'
 }
 
 async function loginAsDemo(role) {
   isLoading.value = true
   authError.value = ''
   try {
-    if (role === 'admin') {
-      email.value = 'admin@negele.bus'
-      password.value = 'admin123'
-    } else {
-      email.value = 'ahmed@easyride.et'
-      password.value = 'driver123'
-    }
+    fillDemo(role)
     await store.signIn(email.value, password.value)
     redirectByRole()
   } catch (err) {
-    authError.value = err.message || 'Demo login failed.'
+    authError.value = mapError(err)
   } finally {
     isLoading.value = false
   }
