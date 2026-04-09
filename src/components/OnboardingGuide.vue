@@ -1,206 +1,333 @@
 <template>
   <section class="relative py-20 px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-[#0F172A] to-[#1E293B]">
-    <!-- Background atmosphere -->
+    <!-- Background glow -->
     <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-[120px]"></div>
+      <div class="absolute top-1/3 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-[120px]"></div>
       <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/5 rounded-full blur-[100px]"></div>
     </div>
 
-    <div class="relative max-w-5xl mx-auto">
-      <!-- Section Header -->
+    <div class="relative max-w-6xl mx-auto">
+      <!-- Header -->
       <div class="text-center mb-14">
         <span class="inline-block bg-accent/10 border border-accent/20 text-accent px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4">How It Works</span>
         <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
           Book your seat in <span class="text-accent">3 easy steps</span>
         </h2>
-        <p class="text-white/50 text-sm mt-3 font-medium max-w-md mx-auto">Rafiki will guide you through the whole process. He's done this a thousand times. 🚌</p>
+        <p class="text-white/50 text-sm mt-3 font-medium max-w-sm mx-auto">Here's exactly what you'll see — no surprises.</p>
       </div>
 
-      <!-- Main Demo Area -->
-      <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+      <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-12">
 
-        <!-- LEFT: Step Navigator -->
-        <div class="flex flex-col gap-3 w-full lg:w-56 flex-shrink-0">
+        <!-- LEFT: Steps -->
+        <div class="flex flex-col gap-3 w-full lg:w-60 flex-shrink-0 order-2 lg:order-1">
           <button
-            v-for="(step, i) in steps"
-            :key="i"
+            v-for="(step, i) in steps" :key="i"
             @click="goToStep(i)"
             :class="[
-              'flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 text-left group',
+              'flex items-start gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 text-left group',
               activeStep === i
-                ? 'bg-accent border-accent text-white shadow-xl shadow-accent/30'
+                ? 'bg-accent border-accent text-white shadow-xl shadow-accent/30 scale-[1.02]'
                 : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10 hover:text-white/80'
             ]"
           >
-            <div :class="['w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0 transition-all', activeStep === i ? 'bg-white/20 text-white' : 'bg-white/5 text-white/30']">
+            <div :class="['w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0 mt-0.5', activeStep === i ? 'bg-white/20 text-white' : 'bg-white/5 text-white/30']">
               {{ i + 1 }}
             </div>
-            <span class="text-sm font-bold leading-tight">{{ step.label }}</span>
+            <div>
+              <p class="text-sm font-bold leading-tight">{{ step.label }}</p>
+              <p :class="['text-xs mt-1 leading-relaxed', activeStep === i ? 'text-white/70' : 'text-white/30']">{{ step.desc }}</p>
+            </div>
           </button>
 
-          <!-- Progress dots -->
+          <!-- Dots -->
           <div class="flex items-center justify-center gap-2 pt-2">
-            <button
-              v-for="(_, i) in steps"
-              :key="i"
-              @click="goToStep(i)"
+            <button v-for="(_, i) in steps" :key="i" @click="goToStep(i)"
               :class="['rounded-full transition-all duration-300', activeStep === i ? 'w-6 h-2 bg-accent' : 'w-2 h-2 bg-white/20']"
             ></button>
           </div>
         </div>
 
-        <!-- RIGHT: App Screen Mockup + Mascot -->
-        <div class="flex-1 relative min-h-[480px] flex items-center justify-center w-full">
+        <!-- CENTER: Phone Mockup -->
+        <div class="flex-1 flex items-center justify-center relative order-1 lg:order-2 w-full">
+          <div class="relative w-full max-w-[280px] mx-auto">
 
-          <!-- Phone Frame -->
-          <div class="relative w-full max-w-[300px] mx-auto">
-            <!-- Phone shell -->
-            <div class="relative bg-gray-900 rounded-[3rem] border-4 border-white/10 shadow-2xl overflow-hidden" style="aspect-ratio: 9/19;">
-              <!-- Status bar -->
-              <div class="absolute top-0 left-0 right-0 h-8 bg-black/40 z-10 flex items-center justify-between px-6">
-                <span class="text-white/50 text-[8px] font-bold">9:41</span>
-                <div class="w-20 h-5 bg-black rounded-full"></div>
-                <div class="flex gap-1">
-                  <div class="w-3 h-2 bg-white/50 rounded-sm"></div>
-                  <div class="w-2 h-2 bg-white/50 rounded-full"></div>
-                </div>
-              </div>
+            <!-- Phone Shell -->
+            <div class="relative bg-[#0a0f1a] rounded-[3.5rem] border-[5px] border-white/15 shadow-[0_40px_80px_rgba(0,0,0,0.7)] overflow-hidden" style="aspect-ratio: 9/19.5;">
 
-              <!-- Step Screens -->
+              <!-- Screen Content -->
               <transition name="screen" mode="out-in">
-                <!-- Step 0: Select Route -->
-                <div v-if="activeStep === 0" key="s0" class="absolute inset-0 bg-[#0F172A] pt-10 px-4 pb-4 flex flex-col">
-                  <p class="text-white/40 text-[8px] uppercase tracking-widest font-black mt-2 mb-3">Search Buses</p>
-                  <div class="space-y-2 flex-1">
-                    <div :class="['bg-white/5 rounded-xl p-3 border transition-all duration-300', highlightEl === 'from' ? 'border-accent shadow-lg shadow-accent/20' : 'border-white/10']">
-                      <p class="text-white/30 text-[7px] uppercase font-black">From</p>
-                      <p class="text-white text-xs font-bold mt-0.5">Negele Borena</p>
+
+                <!-- ====== SCREEN 1: Home Search ====== -->
+                <div v-if="activeStep === 0" key="s0" class="absolute inset-0 bg-background overflow-hidden">
+                  <!-- Mini header -->
+                  <div class="bg-[#0F172A] px-4 pt-8 pb-5" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.06) 1px, transparent 0); background-size: 16px 16px;">
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-5 h-5 rounded-md bg-accent/20 flex-shrink-0"></div>
+                      <span class="text-white font-black text-[9px] tracking-tight">Negele Borena</span>
+                      <div class="ml-auto bg-white/5 rounded-md px-1.5 py-0.5 text-white/40 text-[6px] font-black uppercase tracking-wider border border-white/10">EN</div>
                     </div>
-                    <div class="flex justify-center py-0.5">
-                      <div class="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center text-accent text-xs">⇅</div>
+                    <p class="text-white font-black text-[11px] leading-tight">Travel with <span class="text-accent underline">confidence.</span></p>
+                    <p class="text-white/50 text-[7px] mt-0.5">Book your seat in seconds</p>
+                  </div>
+
+                  <!-- Search card -->
+                  <div class="mx-3 -mt-3 bg-white rounded-2xl shadow-xl p-3 border border-gray-100">
+                    <!-- From -->
+                    <div :class="['rounded-xl p-2.5 border mb-1.5 transition-all duration-500', highlightEl === 'from' ? 'border-orange-400 bg-orange-50 shadow-md shadow-orange-100' : 'border-gray-200 bg-gray-50']">
+                      <p class="text-[6px] font-black text-gray-400 uppercase tracking-widest">Departure</p>
+                      <p class="text-[9px] font-bold text-gray-800 mt-0.5">Negele Borena</p>
                     </div>
-                    <div :class="['bg-white/5 rounded-xl p-3 border transition-all duration-300', highlightEl === 'to' ? 'border-accent shadow-lg shadow-accent/20' : 'border-white/10']">
-                      <p class="text-white/30 text-[7px] uppercase font-black">To</p>
-                      <p class="text-white text-xs font-bold mt-0.5">Addis Ababa</p>
+                    <!-- Swap -->
+                    <div class="flex justify-center my-1">
+                      <div class="w-5 h-5 bg-orange-50 border border-orange-200 rounded-lg flex items-center justify-center text-orange-500 text-[8px]">⇅</div>
                     </div>
-                    <div :class="['bg-white/5 rounded-xl p-3 border transition-all duration-300', highlightEl === 'date' ? 'border-accent shadow-lg shadow-accent/20' : 'border-white/10']">
-                      <p class="text-white/30 text-[7px] uppercase font-black">Date</p>
-                      <p class="text-white text-xs font-bold mt-0.5">Apr 10, 2026</p>
+                    <!-- To -->
+                    <div :class="['rounded-xl p-2.5 border mb-1.5 transition-all duration-500', highlightEl === 'to' ? 'border-orange-400 bg-orange-50 shadow-md shadow-orange-100' : 'border-gray-200 bg-gray-50']">
+                      <p class="text-[6px] font-black text-gray-400 uppercase tracking-widest">Destination</p>
+                      <p class="text-[9px] font-bold text-gray-800 mt-0.5">Addis Ababa</p>
                     </div>
-                    <button :class="['w-full py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300', highlightEl === 'search' ? 'bg-accent text-white scale-105 shadow-lg shadow-accent/30' : 'bg-white/10 text-white/50']">
+                    <!-- Date -->
+                    <div :class="['rounded-xl p-2.5 border mb-2 transition-all duration-500', highlightEl === 'date' ? 'border-orange-400 bg-orange-50 shadow-md shadow-orange-100' : 'border-gray-200 bg-gray-50']">
+                      <p class="text-[6px] font-black text-gray-400 uppercase tracking-widest">Date</p>
+                      <p class="text-[9px] font-bold text-gray-800 mt-0.5">Apr 10, 2026</p>
+                    </div>
+                    <!-- Search btn -->
+                    <div :class="['w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest text-center transition-all duration-500', highlightEl === 'search' ? 'bg-accent text-white scale-105 shadow-lg shadow-orange-300' : 'bg-gray-900 text-white']">
                       Search Buses →
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Step 1: Pick a Seat -->
-                <div v-else-if="activeStep === 1" key="s1" class="absolute inset-0 bg-[#0F172A] pt-10 px-3 pb-4 flex flex-col">
-                  <p class="text-white/40 text-[8px] uppercase tracking-widest font-black mt-2 mb-2">Pick Your Seat</p>
-                  <div class="bg-white/5 rounded-xl p-2 border border-white/10 flex-1">
-                    <p class="text-white/30 text-[7px] uppercase font-black text-center mb-2">— FRONT —</p>
-                    <div class="grid grid-cols-4 gap-1">
-                      <div
-                        v-for="n in 24"
-                        :key="n"
-                        :class="[
-                          'rounded-lg text-[7px] font-black flex items-center justify-center transition-all duration-300',
-                          n === animSeatPick ? 'bg-accent text-white scale-110 shadow-md' :
-                          [3,7,12,18].includes(n) ? 'bg-white/10 text-white/20' : 'bg-white/5 text-white/40',
-                          n % 3 === 0 ? 'col-span-1 h-6' : 'h-6'
-                        ]"
-                      >{{ n }}</div>
                     </div>
-                    <div :class="['mt-3 w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest text-center transition-all duration-300', animSeatPick ? 'bg-accent text-white' : 'bg-white/10 text-white/30']">
-                      {{ animSeatPick ? `Confirm Seat #${animSeatPick}` : 'Select a seat' }}
+                  </div>
+
+                  <!-- Popular routes preview -->
+                  <div class="px-3 mt-3">
+                    <p class="text-[7px] font-black text-gray-500 uppercase tracking-widest mb-1.5">Popular Routes</p>
+                    <div class="space-y-1">
+                      <div v-for="r in ['Negele → Hawassa', 'Negele → Moyale']" :key="r" class="bg-white rounded-lg border border-gray-100 px-2.5 py-1.5 flex items-center justify-between">
+                        <span class="text-[7px] font-bold text-gray-700">{{ r }}</span>
+                        <svg class="w-2.5 h-2.5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Step 2: Booking Confirmed + QR -->
-                <div v-else-if="activeStep === 2" key="s2" class="absolute inset-0 bg-[#0F172A] pt-10 px-4 pb-4 flex flex-col items-center">
-                  <!-- Success icon -->
-                  <div :class="['w-12 h-12 rounded-full flex items-center justify-center mt-4 mb-3 transition-all duration-700', showQR ? 'bg-green-500 scale-100' : 'bg-green-500/30 scale-75']">
-                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                    </svg>
-                  </div>
-                  <p class="text-white font-black text-sm">Booking Confirmed!</p>
-                  <p class="text-white/40 text-[8px] uppercase tracking-widest mt-0.5 mb-3">Your ticket is ready</p>
-
-                  <!-- QR Code placeholder -->
-                  <div :class="['bg-white rounded-2xl p-3 transition-all duration-700', showQR ? 'opacity-100 scale-100' : 'opacity-0 scale-90']">
-                    <!-- Faked QR pattern -->
-                    <div class="w-24 h-24 grid grid-cols-7 gap-px">
-                      <div v-for="(cell, idx) in qrPattern" :key="idx"
-                        :class="['rounded-[1px]', cell ? 'bg-gray-900' : 'bg-white']"
-                      ></div>
+                <!-- ====== SCREEN 2: Bus Results + Seat Selector ====== -->
+                <div v-else-if="activeStep === 1" key="s1" class="absolute inset-0 bg-background overflow-hidden">
+                  <!-- Header -->
+                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-lg bg-white/10 flex items-center justify-center">
+                      <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </div>
+                    <span class="text-white font-black text-[9px]">Negele → Addis Ababa</span>
                   </div>
-                  <p :class="['text-[8px] text-white/40 font-black uppercase mt-2 tracking-widest transition-all duration-500', showQR ? 'opacity-100' : 'opacity-0']">Scan to Board</p>
 
-                  <!-- Save buttons -->
-                  <div :class="['w-full space-y-2 mt-3 transition-all duration-700', showQR ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4']">
-                    <div :class="['w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest text-center transition-all duration-300', highlightEl === 'save' ? 'bg-accent text-white scale-105' : 'bg-white/10 text-white/60']">
-                      📥 Save QR Code
-                    </div>
-                    <div class="w-full py-2 rounded-xl text-[8px] font-black uppercase tracking-widest text-center bg-white/5 text-white/30">
-                      📋 My Bookings
+                  <div class="px-3 py-2 overflow-hidden">
+                    <!-- Bus cards -->
+                    <p class="text-[6px] font-black text-gray-400 uppercase tracking-widest mb-1.5">3 buses available</p>
+                    <div class="space-y-2">
+                      <div v-for="(bus, idx) in mockBuses" :key="bus.name"
+                        :class="['bg-white rounded-xl border p-2.5 transition-all duration-500', highlightEl === 'bus' + idx ? 'border-orange-400 shadow-md scale-[1.02] shadow-orange-100' : 'border-gray-100']">
+                        <div class="flex items-start justify-between mb-1.5">
+                          <div>
+                            <p class="text-[8px] font-black text-gray-800">{{ bus.name }}</p>
+                            <p class="text-[6px] text-gray-400 font-bold">{{ bus.seats }} seats</p>
+                          </div>
+                          <div class="text-right">
+                            <span class="text-[10px] font-black text-gray-900">{{ bus.price }}</span>
+                            <span class="text-[6px] text-gray-400 ml-0.5">ETB</span>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-1 text-[6px] text-gray-500 font-bold mb-1.5">
+                          <span class="bg-gray-100 rounded px-1 py-0.5">{{ bus.depart }}</span>
+                          <div class="flex-1 h-px bg-gray-200 relative">
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white border border-gray-300 rounded-full"></div>
+                          </div>
+                          <span class="bg-gray-100 rounded px-1 py-0.5">{{ bus.arrive }}</span>
+                        </div>
+                        <div :class="['w-full py-1 rounded-lg text-center text-[6px] font-black uppercase tracking-widest transition-all duration-500', highlightEl === 'bus' + idx ? 'bg-accent text-white' : 'bg-gray-900 text-white']">
+                          Select Seat →
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                <!-- ====== SCREEN 3: Seat Map ====== -->
+                <div v-else-if="activeStep === 2" key="s2" class="absolute inset-0 bg-background overflow-hidden">
+                  <!-- Header -->
+                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-lg bg-white/10 flex items-center justify-center">
+                      <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </div>
+                    <span class="text-white font-black text-[9px]">Pick Your Seat</span>
+                  </div>
+
+                  <div class="px-3 pt-2">
+                    <!-- Legend -->
+                    <div class="flex items-center justify-center gap-3 mb-2">
+                      <div v-for="l in seatLegend" :key="l.label" class="flex items-center gap-1">
+                        <div :class="['w-4 h-4 rounded-md border', l.cls]"></div>
+                        <span class="text-[6px] text-gray-500 font-bold">{{ l.label }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Front label -->
+                    <div class="flex justify-center mb-2">
+                      <div class="bg-gray-100 border border-gray-200 text-gray-500 text-[6px] font-black px-3 py-0.5 rounded-full">🚌 FRONT</div>
+                    </div>
+
+                    <!-- Seat grid -->
+                    <div class="space-y-1 px-1">
+                      <div v-for="(row, ri) in seatRows" :key="ri" class="flex items-center justify-center gap-1">
+                        <button
+                          v-for="n in row.slice(0,2)" :key="n"
+                          @click="pickSeat(n)"
+                          :class="['w-8 h-8 rounded-lg text-[7px] font-black transition-all duration-300', seatCls(n)]"
+                        >{{ n }}</button>
+                        <div class="w-3"></div>
+                        <button
+                          v-for="n in row.slice(2,4)" :key="n"
+                          @click="pickSeat(n)"
+                          :class="['w-8 h-8 rounded-lg text-[7px] font-black transition-all duration-300', seatCls(n)]"
+                        >{{ n }}</button>
+                      </div>
+                    </div>
+
+                    <!-- Confirm btn -->
+                    <div class="px-1 mt-3">
+                      <div :class="['w-full py-2 rounded-xl text-[7px] font-black uppercase tracking-widest text-center transition-all duration-500', selectedSeat ? 'bg-accent text-white scale-105 shadow-lg shadow-orange-200' : 'bg-gray-200 text-gray-400']">
+                        {{ selectedSeat ? `Confirm Booking — Seat #${selectedSeat}` : 'Select a seat above' }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ====== SCREEN 4: Boarding Pass + QR ====== -->
+                <div v-else-if="activeStep === 3" key="s3" class="absolute inset-0 bg-background overflow-hidden">
+                  <!-- Header -->
+                  <div class="bg-[#0F172A] px-3 pt-8 pb-3 flex items-center gap-2">
+                    <div class="w-5 h-5 rounded-lg bg-white/10 flex items-center justify-center">
+                      <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </div>
+                    <span class="text-white font-black text-[9px]">Booking Confirmed</span>
+                  </div>
+
+                  <div class="px-4 pt-3 flex flex-col items-center">
+                    <!-- Success check -->
+                    <div :class="['w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all duration-700', showQR ? 'bg-green-500' : 'bg-green-200']">
+                      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <p class="text-gray-900 font-black text-[10px] mb-0.5">Booking Confirmed!</p>
+                    <p class="text-gray-400 text-[7px] font-bold mb-3">ID: #2847</p>
+
+                    <!-- Boarding pass card -->
+                    <div class="w-full bg-white rounded-2xl border-t-4 border-accent border border-gray-200 shadow-md overflow-hidden">
+                      <!-- Header strip -->
+                      <div class="bg-gray-50 px-3 py-2 border-b border-gray-100">
+                        <div class="flex items-center gap-1 mb-0.5">
+                          <svg class="w-2.5 h-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                          <p class="text-[6px] text-gray-400 font-black uppercase tracking-wider">Boarding Pass</p>
+                        </div>
+                        <p class="text-[8px] font-black text-gray-800">Negele Borena → Addis Ababa</p>
+                      </div>
+                      <!-- Tear line -->
+                      <div class="flex items-center">
+                        <div class="w-3 h-3 bg-background border-r border-gray-100 rounded-full -ml-1.5 flex-shrink-0"></div>
+                        <div class="flex-1 border-t-2 border-dashed border-gray-200"></div>
+                        <div class="w-3 h-3 bg-background border-l border-gray-100 rounded-full -mr-1.5 flex-shrink-0"></div>
+                      </div>
+                      <!-- Details -->
+                      <div class="px-3 py-2 space-y-1">
+                        <div v-for="d in ticketDetails" :key="d.label" class="flex items-center justify-between">
+                          <span class="text-[6px] text-gray-400">{{ d.label }}</span>
+                          <span class="text-[6px] font-bold text-gray-800">{{ d.val }}</span>
+                        </div>
+                        <div class="pt-1 mt-1 border-t border-gray-100 flex items-center justify-between">
+                          <span class="text-[7px] font-black text-gray-800">Total</span>
+                          <span class="text-[10px] font-black text-gray-900">300 <span class="text-[6px] font-bold text-gray-400">ETB</span></span>
+                        </div>
+                      </div>
+                      <!-- QR Section -->
+                      <div :class="['bg-gray-50 border-t border-gray-100 px-3 py-3 flex flex-col items-center transition-all duration-700', showQR ? 'opacity-100' : 'opacity-30']">
+                        <!-- Mini QR grid -->
+                        <div class="bg-white p-1.5 rounded-lg border border-gray-200 mb-1.5">
+                          <div class="w-16 h-16 grid grid-cols-7 gap-px">
+                            <div v-for="(cell, idx) in qrPattern" :key="idx"
+                              :class="['rounded-[1px]', cell ? 'bg-gray-900' : 'bg-white']"
+                            ></div>
+                          </div>
+                        </div>
+                        <p class="text-[6px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Scan to Board</p>
+                        <!-- Save button -->
+                        <div :class="['w-full py-1.5 rounded-lg text-[6px] font-black uppercase tracking-widest text-center transition-all duration-500', highlightEl === 'save' ? 'bg-accent text-white scale-105 shadow-sm shadow-orange-200' : 'bg-gray-100 text-gray-500']">
+                          📥 Save QR Code
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </transition>
+
+              <!-- Notch -->
+              <div class="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-4 bg-black/80 rounded-full z-20"></div>
             </div>
 
-            <!-- Notch -->
-            <div class="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-20"></div>
-          </div>
-
-          <!-- ===== MASCOT: RAFIKI ===== -->
-          <div
-            :class="['absolute transition-all duration-700 ease-in-out select-none pointer-events-none', mascotPosition]"
-          >
-            <div class="relative">
-              <!-- Body -->
-              <div :class="['text-5xl sm:text-6xl transition-all duration-300', mascotBounce ? 'animate-bounce' : '', mascotSpin ? 'animate-spin' : '']">
-                {{ mascotEmoji }}
-              </div>
-              <!-- Speech Bubble -->
+            <!-- ===== MASCOT ===== -->
+            <transition name="mascot">
               <div
-                v-if="mascotSpeech"
-                :class="[
-                  'absolute bg-white rounded-2xl shadow-2xl px-3 py-2 text-xs font-bold text-gray-800 whitespace-nowrap bottom-full mb-2',
-                  mascotBubbleSide === 'left' ? 'left-0' : 'right-0'
-                ]"
-                style="max-width: 180px; white-space: normal;"
+                :key="mascotPos"
+                :class="['absolute pointer-events-none select-none transition-all duration-500', mascotPos]"
               >
-                {{ mascotSpeech }}
-                <div :class="['absolute top-full w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white', mascotBubbleSide === 'left' ? 'left-4' : 'right-4']"></div>
+                <div class="relative">
+                  <div :class="['text-4xl', mascotBounce ? 'animate-bounce' : '']">{{ mascotEmoji }}</div>
+                  <!-- Bubble -->
+                  <div v-if="mascotSpeech"
+                    :class="[
+                      'absolute bottom-full mb-2 bg-white rounded-2xl shadow-2xl px-3 py-2 text-[10px] font-bold text-gray-800 leading-snug',
+                      mascotRight ? 'right-0' : 'left-0'
+                    ]"
+                    style="min-width: 130px; max-width: 150px;"
+                  >
+                    {{ mascotSpeech }}
+                    <div :class="['absolute top-full w-0 h-0 border-x-6 border-x-transparent border-t-6 border-t-white', mascotRight ? 'right-4' : 'left-4']"></div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </transition>
 
-          <!-- Tap Indicator -->
-          <transition name="tap">
-            <div
-              v-if="showTap"
-              class="absolute pointer-events-none z-20"
-              :style="tapPosition"
-            >
-              <div class="w-10 h-10 rounded-full bg-accent/40 border-2 border-accent animate-ping"></div>
-              <div class="absolute inset-2 rounded-full bg-accent/60"></div>
+            <!-- Tap ripple -->
+            <transition name="tap">
+              <div v-if="showTap" class="absolute pointer-events-none z-30" :style="tapStyle">
+                <div class="w-8 h-8 rounded-full bg-accent/30 border-2 border-accent animate-ping"></div>
+                <div class="absolute inset-1.5 rounded-full bg-accent/60"></div>
+              </div>
+            </transition>
+
+          </div>
+        </div>
+
+        <!-- RIGHT: Description panel -->
+        <div class="w-full lg:w-56 order-3 flex-shrink-0">
+          <transition name="desc" mode="out-in">
+            <div :key="activeStep" class="bg-white/5 border border-white/10 rounded-3xl p-6">
+              <div class="text-3xl mb-4">{{ steps[activeStep].icon }}</div>
+              <h3 class="text-white font-black text-base mb-2">{{ steps[activeStep].label }}</h3>
+              <p class="text-white/50 text-xs leading-relaxed">{{ steps[activeStep].full }}</p>
+              <ul class="mt-4 space-y-2">
+                <li v-for="tip in steps[activeStep].tips" :key="tip" class="flex items-start gap-2 text-white/40 text-xs">
+                  <span class="text-accent mt-px flex-shrink-0">✓</span>
+                  {{ tip }}
+                </li>
+              </ul>
             </div>
           </transition>
-
         </div>
+
       </div>
 
-      <!-- Bottom: Tips Bar -->
+      <!-- Bottom tips -->
       <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div
-          v-for="tip in tips"
-          :key="tip.icon"
-          class="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-start gap-3 hover:bg-white/10 transition-all"
-        >
+        <div v-for="tip in bottomTips" :key="tip.icon"
+          class="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-start gap-3 hover:bg-white/10 transition-all">
           <span class="text-2xl flex-shrink-0 mt-0.5">{{ tip.icon }}</span>
           <div>
             <p class="text-white font-bold text-sm">{{ tip.title }}</p>
@@ -213,198 +340,242 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
-// Steps definition
 const steps = [
-  { label: 'Choose Your Route' },
-  { label: 'Pick a Seat' },
-  { label: 'Get Your QR Ticket' },
+  {
+    label: 'Search for Buses',
+    icon: '🔍',
+    desc: 'Open the app & enter your route',
+    full: 'Pick your departure city, destination, and travel date. Just like you see it here — clean and simple.',
+    tips: ['Choose your departure city', 'Select destination', 'Pick a travel date']
+  },
+  {
+    label: 'Choose a Bus',
+    icon: '🚌',
+    desc: 'Compare times & prices',
+    full: 'We show you all available buses for your route — with departure times, prices, and seat availability.',
+    tips: ['See all available buses', 'Compare prices & times', 'Tap Select Seat to continue']
+  },
+  {
+    label: 'Pick Your Seat',
+    icon: '💺',
+    desc: 'Tap an available seat on the map',
+    full: 'The seat map shows every seat on the bus. Grey = taken. White = available. Orange = yours.',
+    tips: ['Grey seats are already taken', 'Tap any white seat to select', 'Confirm to move to booking']
+  },
+  {
+    label: 'Save Your QR Ticket',
+    icon: '🎟️',
+    desc: 'Your boarding pass is ready',
+    full: 'Once confirmed, you get a digital boarding pass with a QR code. Show this to the driver at the gate.',
+    tips: ['Screenshot or save the QR code', 'No account needed', 'Show QR to board the bus']
+  },
 ]
 
-const tips = [
-  { icon: '📸', title: 'Screenshot your QR', desc: 'Take a screenshot of your QR code so it\'s accessible offline at the station.' },
-  { icon: '💾', title: 'Save to phone', desc: 'Tap "Save QR" on the confirmation page to download it directly to your gallery.' },
-  { icon: '🔒', title: 'Keep it safe', desc: 'One QR code = one seat. Don\'t share it with others to avoid conflicts at boarding.' },
+const mockBuses = [
+  { name: 'Negele Express', seats: '44', price: '250', depart: '06:00', arrive: '10:30' },
+  { name: 'Sky Bus', seats: '32', price: '320', depart: '08:30', arrive: '13:00' },
 ]
 
-// QR fake pattern (7x7 grid)
+const seatLegend = [
+  { label: 'Open', cls: 'bg-white border-gray-300' },
+  { label: 'Yours', cls: 'bg-orange-500 border-orange-500' },
+  { label: 'Taken', cls: 'bg-gray-100 border-gray-200' },
+]
+
+const takenInDemo = [3, 7, 10, 15, 18]
+const allSeats = Array.from({ length: 20 }, (_, i) => i + 1)
+const seatRows = computed(() => {
+  const rows = []
+  for (let i = 0; i < 20; i += 4) rows.push(allSeats.slice(i, i + 4))
+  return rows
+})
+
 const qrPattern = [
   1,1,1,1,1,1,1,
   1,0,0,0,0,0,1,
-  1,0,1,0,1,0,1,
-  1,0,0,1,0,0,1,
-  1,0,1,0,1,0,1,
+  1,0,1,1,1,0,1,
+  1,0,0,0,0,0,1,
+  1,0,1,1,1,0,1,
   1,0,0,0,0,0,1,
   1,1,1,1,1,1,1,
 ]
 
+const ticketDetails = [
+  { label: 'Passenger', val: 'Abebe Girma' },
+  { label: 'Phone', val: '0912 345 678' },
+  { label: 'Seat', val: '#5' },
+  { label: 'Bus', val: 'Negele Express' },
+]
+
+// State
 const activeStep = ref(0)
 const highlightEl = ref('')
-const animSeatPick = ref(null)
+const selectedSeat = ref(null)
 const showQR = ref(false)
 const mascotEmoji = ref('🧑‍✈️')
 const mascotSpeech = ref('')
-const mascotPosition = ref('bottom-4 -right-4 sm:-right-12')
-const mascotBubbleSide = ref('right')
+const mascotPos = ref('bottom-2 -right-12')
+const mascotRight = ref(true)
 const mascotBounce = ref(false)
-const mascotSpin = ref(false)
 const showTap = ref(false)
-const tapPosition = ref({ top: '50%', left: '50%' })
+const tapStyle = ref({})
 
-let timer = null
-
-function clearTimer() {
-  if (timer) clearInterval(timer)
+function seatCls(n) {
+  if (n === selectedSeat.value) return 'bg-accent text-white border-2 border-orange-400 scale-110 shadow-md'
+  if (takenInDemo.includes(n)) return 'bg-gray-100 text-gray-300 cursor-not-allowed border border-gray-200'
+  return 'bg-white text-gray-700 border border-gray-200 hover:border-orange-400 hover:shadow-sm'
 }
 
-// Step 0 animation sequence
+function pickSeat(n) {
+  if (!takenInDemo.includes(n)) selectedSeat.value = n
+}
+
+let timer = null
+let autoTimer = null
+
+function clearTimer() {
+  if (timer) { clearInterval(timer); timer = null }
+}
+
+function tap(top, left) {
+  tapStyle.value = { position: 'absolute', top, left, transform: 'translate(-50%, -50%)' }
+  showTap.value = true
+  setTimeout(() => showTap.value = false, 900)
+}
+
 function runStep0() {
   mascotEmoji.value = '🧑‍✈️'
-  mascotPosition.value = 'bottom-4 -right-4 sm:-right-12'
-  mascotBubbleSide.value = 'right'
-  mascotSpeech.value = "First, pick where you're going! ✈️"
-  mascotBounce.value = true
-  highlightEl.value = 'from'
+  mascotPos.value = 'bottom-2 -right-10 sm:-right-14'
+  mascotRight.value = true
+  mascotSpeech.value = 'Enter where you\'re going! 🗺️'
+  mascotBounce.value = false
+  selectedSeat.value = null
+  showQR.value = false
 
   let seq = 0
   clearTimer()
   timer = setInterval(() => {
-    seq++
-    if (seq === 1) { highlightEl.value = 'to'; mascotSpeech.value = 'Now select your destination 🎯' }
-    if (seq === 2) { highlightEl.value = 'date'; mascotSpeech.value = 'Pick your travel date 📅' }
-    if (seq === 3) {
-      highlightEl.value = 'search'
-      mascotSpeech.value = 'Hit search! I\'ll find the best buses 🚌'
-      showTap.value = true
-      tapPosition.value = { bottom: '20%', left: '50%', transform: 'translateX(-50%)' }
-    }
-    if (seq === 4) { showTap.value = false; seq = 0; highlightEl.value = 'from'; mascotSpeech.value = "First, pick where you're going! ✈️" }
-  }, 1800)
+    seq = (seq + 1) % 4
+    if (seq === 0) { highlightEl.value = 'from'; mascotSpeech.value = 'Pick your departure city 📍'; tap('62%', '50%') }
+    if (seq === 1) { highlightEl.value = 'to'; mascotSpeech.value = 'Now your destination 🎯'; tap('72%', '50%') }
+    if (seq === 2) { highlightEl.value = 'date'; mascotSpeech.value = 'Choose a travel date 📅'; tap('81%', '50%') }
+    if (seq === 3) { highlightEl.value = 'search'; mascotSpeech.value = 'Tap Search Buses! 🚌'; mascotBounce.value = true; tap('91%', '50%') }
+  }, 2000)
 }
 
-// Step 1 animation sequence
 function runStep1() {
   mascotEmoji.value = '🧑‍✈️'
-  mascotPosition.value = 'bottom-4 -left-4 sm:-left-12'
-  mascotBubbleSide.value = 'left'
-  mascotSpeech.value = 'Green = available. Tap one! 🟢'
+  mascotPos.value = 'bottom-2 -left-10 sm:-left-14'
+  mascotRight.value = false
+  mascotSpeech.value = 'Compare buses & prices! 💰'
   mascotBounce.value = false
-  animSeatPick.value = null
+  selectedSeat.value = null
+  showQR.value = false
+
+  let seq = 0
+  clearTimer()
+  timer = setInterval(() => {
+    seq = (seq + 1) % 2
+    highlightEl.value = 'bus' + seq
+    if (seq === 0) { mascotSpeech.value = 'Negele Express — great price! 👍'; tap('55%', '50%') }
+    if (seq === 1) { mascotSpeech.value = 'Sky Bus is VIP comfort ✨'; tap('78%', '50%') }
+  }, 2200)
+}
+
+function runStep2() {
+  mascotEmoji.value = '🧑‍✈️'
+  mascotPos.value = 'bottom-2 -right-10 sm:-right-14'
+  mascotRight.value = true
+  mascotSpeech.value = 'Tap an open seat! ⬜'
   highlightEl.value = ''
+  mascotBounce.value = false
+  selectedSeat.value = null
+  showQR.value = false
 
   clearTimer()
   let picked = false
   timer = setInterval(() => {
     if (!picked) {
-      const choices = [5, 9, 14, 20]
-      animSeatPick.value = choices[Math.floor(Math.random() * choices.length)]
-      mascotSpeech.value = `Seat #${animSeatPick.value}? Great choice! 😄`
+      const avail = allSeats.filter(n => !takenInDemo.includes(n))
+      const pick = avail[Math.floor(Math.random() * avail.length)]
+      selectedSeat.value = pick
+      mascotSpeech.value = `Seat #${pick} — perfect! 🙌`
       mascotBounce.value = true
-      showTap.value = true
-      tapPosition.value = { top: '35%', left: '45%' }
+      tap('75%', (((pick - 1) % 2) < 1 ? '35%' : '65%'))
       picked = true
     } else {
-      animSeatPick.value = null
-      mascotSpeech.value = 'Green = available. Tap one! 🟢'
+      selectedSeat.value = null
+      mascotSpeech.value = 'Tap an open seat! ⬜'
       mascotBounce.value = false
-      showTap.value = false
       picked = false
     }
   }, 2000)
 }
 
-// Step 2 animation sequence
-function runStep2() {
+function runStep3() {
   mascotEmoji.value = '🥳'
-  mascotPosition.value = 'bottom-4 -right-4 sm:-right-12'
-  mascotBubbleSide.value = 'right'
-  mascotSpeech.value = 'You\'re booked! Your QR is ready 🎉'
-  mascotBounce.value = true
-  showQR.value = false
+  mascotPos.value = 'bottom-2 -right-10 sm:-right-14'
+  mascotRight.value = true
+  mascotSpeech.value = 'Your ticket is ready! 🎉'
   highlightEl.value = ''
-  showTap.value = false
+  showQR.value = false
+  mascotBounce.value = true
 
   clearTimer()
-  setTimeout(() => {
-    showQR.value = true
-    mascotSpeech.value = 'Save this QR code to your phone! 📱'
-  }, 600)
+  setTimeout(() => { showQR.value = true; mascotSpeech.value = 'Save this QR code! 📱' }, 800)
 
   let seq = 0
   timer = setInterval(() => {
-    seq++
-    if (seq === 1) {
-      highlightEl.value = 'save'
-      mascotSpeech.value = 'Tap SAVE to keep it safe 📥'
-      mascotEmoji.value = '🧑‍✈️'
-      showTap.value = true
-      tapPosition.value = { bottom: '28%', left: '50%', transform: 'translateX(-50%)' }
-    }
-    if (seq === 2) {
-      highlightEl.value = ''
-      showTap.value = false
-      mascotSpeech.value = 'Or take a screenshot! 📸'
-      mascotEmoji.value = '🥳'
-      mascotBounce.value = true
-    }
-    if (seq === 3) {
-      mascotSpeech.value = 'Show it to the driver at the gate ✅'
-      mascotBounce.value = false
-      mascotEmoji.value = '🧑‍✈️'
-      seq = 0
-    }
+    seq = (seq + 1) % 3
+    if (seq === 0) { highlightEl.value = 'save'; mascotSpeech.value = 'Tap SAVE to download it 📥'; mascotEmoji.value = '🧑‍✈️'; tap('93%', '50%') }
+    if (seq === 1) { highlightEl.value = ''; mascotSpeech.value = 'Or just screenshot it! 📸'; mascotEmoji.value = '🥳'; mascotBounce.value = true }
+    if (seq === 2) { mascotSpeech.value = 'Show it to the driver at the gate ✅'; mascotBounce.value = false; mascotEmoji.value = '🧑‍✈️' }
   }, 2400)
 }
 
 function goToStep(i) {
   clearTimer()
   showTap.value = false
-  mascotBounce.value = false
+  highlightEl.value = ''
   activeStep.value = i
-
   if (i === 0) runStep0()
   else if (i === 1) runStep1()
   else if (i === 2) runStep2()
+  else if (i === 3) runStep3()
 }
 
-// Auto-advance
-let autoTimer = null
-function startAutoAdvance() {
+function startAuto() {
   autoTimer = setInterval(() => {
-    const next = (activeStep.value + 1) % steps.length
-    goToStep(next)
-  }, 9000)
+    goToStep((activeStep.value + 1) % steps.length)
+  }, 10000)
 }
 
-onMounted(() => {
-  goToStep(0)
-  startAutoAdvance()
-})
+const bottomTips = [
+  { icon: '📸', title: 'Screenshot your QR', desc: 'Take a screenshot so it works even when you\'re offline at the station.' },
+  { icon: '💾', title: 'Save to gallery', desc: 'Tap "Save QR" on the confirmation page to download it directly.' },
+  { icon: '🔒', title: 'One ticket, one seat', desc: 'Your QR is unique to your booking. Don\'t share it — it\'s your ticket.' },
+]
 
-onUnmounted(() => {
-  clearTimer()
-  if (autoTimer) clearInterval(autoTimer)
-})
+onMounted(() => { goToStep(0); startAuto() })
+onUnmounted(() => { clearTimer(); if (autoTimer) clearInterval(autoTimer) })
 </script>
 
 <style scoped>
-.screen-enter-active, .screen-leave-active {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.screen-enter-from {
-  opacity: 0;
-  transform: translateX(20px) scale(0.97);
-}
-.screen-leave-to {
-  opacity: 0;
-  transform: translateX(-20px) scale(0.97);
-}
-.tap-enter-active, .tap-leave-active {
-  transition: all 0.3s ease;
-}
-.tap-enter-from, .tap-leave-to {
-  opacity: 0;
-  transform: scale(0.5);
-}
+.screen-enter-active, .screen-leave-active { transition: all 0.4s cubic-bezier(0.16,1,0.3,1); }
+.screen-enter-from { opacity: 0; transform: translateX(16px) scale(0.98); }
+.screen-leave-to   { opacity: 0; transform: translateX(-16px) scale(0.98); }
+
+.desc-enter-active, .desc-leave-active { transition: all 0.3s ease; }
+.desc-enter-from, .desc-leave-to { opacity: 0; transform: translateY(8px); }
+
+.mascot-enter-active, .mascot-leave-active { transition: all 0.4s ease; }
+.mascot-enter-from, .mascot-leave-to { opacity: 0; transform: scale(0.7); }
+
+.tap-enter-active, .tap-leave-active { transition: all 0.3s ease; }
+.tap-enter-from, .tap-leave-to { opacity: 0; transform: scale(0.4); }
+
+.border-x-6 { border-left-width: 6px; border-right-width: 6px; }
+.border-t-6  { border-top-width: 6px; }
 </style>
