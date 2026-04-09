@@ -419,11 +419,14 @@ export const store = reactive({
         this.isAuthenticated = true
         await this.fetchProfile(session.user.id)
         if (this.userProfile?.role === 'driver') await this.fetchDriverBus()
+        // Re-fetch drivers now that we're authenticated (RLS requires auth to read profiles)
+        await this.fetchDrivers().catch(() => {})
       } else {
         this.user = null
         this.userProfile = null
         this.driverBus = null
         this.isAuthenticated = false
+        this.drivers = []
       }
     })
   },
@@ -466,12 +469,12 @@ export const store = reactive({
   async fetchDrivers() {
     const { data, error } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, full_name, email, phone, role')
       .eq('role', 'driver')
       .order('full_name', { ascending: true })
-    
+
     if (data) this.drivers = data
-    if (error) console.error('Error fetching drivers:', error)
+    if (error) console.error('[fetchDrivers] Error — likely an RLS policy issue. Add a policy in Supabase allowing admins to SELECT all profiles:', error)
   },
 
   async fetchProfile(userId) {
@@ -501,6 +504,9 @@ export const store = reactive({
     if (this.userProfile.role === 'driver') {
       await this.fetchDriverBus().catch(() => {})
     }
+
+    // Load drivers list now that we have an authenticated session
+    await this.fetchDrivers().catch(() => {})
 
     return data
   },
@@ -648,13 +654,17 @@ export const store = reactive({
   },
 
   async assignRouteToBus(busId, routeId) {
-    const { error } = await supabase.from('buses').update({ route_id: routeId }).eq('id', busId)
+    // e.target.value is always a string; empty string means "Unassigned" → send null
+    const value = routeId || null
+    const { error } = await supabase.from('buses').update({ route_id: value }).eq('id', busId)
     if (error) console.error('Error assigning route to bus:', error)
     else await this.fetchBuses()
   },
 
   async assignDriverToBus(busId, driverId) {
-    const { error } = await supabase.from('buses').update({ driver_id: driverId }).eq('id', busId)
+    // e.target.value is always a string; empty string means "Unassigned" → send null
+    const value = driverId || null
+    const { error } = await supabase.from('buses').update({ driver_id: value }).eq('id', busId)
     if (error) console.error('Error assigning driver to bus:', error)
     else await this.fetchBuses()
   },
