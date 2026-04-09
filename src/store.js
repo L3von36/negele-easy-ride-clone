@@ -535,13 +535,21 @@ export const store = reactive({
   },
 
   async cancelBooking(id) {
+    const b = this.bookings.find(b => b.id === id)
+    if (!b) return
+    const prev = b.status
+    b.status = 'Canceled'
     const { error } = await supabase.from('bookings').update({ status: 'Canceled' }).eq('id', id)
-    if (error) console.error('Error canceling booking:', error)
+    if (error) { b.status = prev; console.error('Error canceling booking:', error) }
   },
-  
+
   async confirmBooking(id) {
+    const b = this.bookings.find(b => b.id === id)
+    if (!b) return
+    const prev = b.status
+    b.status = 'Confirmed'
     const { error } = await supabase.from('bookings').update({ status: 'Confirmed' }).eq('id', id)
-    if (error) console.error('Error confirming booking:', error)
+    if (error) { b.status = prev; console.error('Error confirming booking:', error) }
   },
 
   async toggleBoarding(id) {
@@ -570,13 +578,16 @@ export const store = reactive({
     }
     const { error } = await supabase.from('routes').insert([dbData])
     if (error) console.error('Error adding route:', error)
+    else await this.fetchRoutes()
   },
 
   async toggleRouteStatus(id) {
     const r = this.routes.find(r => r.id === id)
     if (r) {
-      const { error } = await supabase.from('routes').update({ active: !r.active }).eq('id', id)
-      if (error) console.error('Error toggling route:', error)
+      const prev = r.active
+      r.active = !r.active
+      const { error } = await supabase.from('routes').update({ active: r.active }).eq('id', id)
+      if (error) { r.active = prev; console.error('Error toggling route:', error) }
     }
   },
 
@@ -596,6 +607,7 @@ export const store = reactive({
   async addBus(busData) {
     const { error } = await supabase.from('buses').insert([busData])
     if (error) console.error('Error adding bus:', error)
+    else await this.fetchBuses()
   },
 
   async updateRoute(id, routeData) {
@@ -608,16 +620,19 @@ export const store = reactive({
     }
     const { error } = await supabase.from('routes').update(dbData).eq('id', id)
     if (error) console.error('Error updating route:', error)
+    else await this.fetchRoutes()
   },
 
   async deleteRoute(id) {
     const { error } = await supabase.from('routes').delete().eq('id', id)
     if (error) console.error('Error deleting route:', error)
+    else await this.fetchRoutes()
   },
 
   async deleteBus(id) {
     const { error } = await supabase.from('buses').delete().eq('id', id)
     if (error) console.error('Error deleting bus:', error)
+    else await this.fetchBuses()
   },
 
   async updateBusStatus(id, newStatus) {
