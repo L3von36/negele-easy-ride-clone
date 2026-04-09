@@ -2,44 +2,7 @@
   <div class="min-h-screen bg-background">
 
     <!-- Header -->
-    <header class="bg-[#0F172A] border-b border-white/10">
-      <div class="flex justify-between items-center px-4 sm:px-6 py-4 max-w-7xl mx-auto">
-        <!-- Logo -->
-        <div class="flex items-center space-x-3">
-          <img src="/favicon.png" alt="Logo" class="rounded-lg w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0 object-cover border border-white/10 shadow-lg" />
-          <div>
-            <h1 class="text-base sm:text-xl font-bold text-white leading-tight">{{ t('brand_name') }}</h1>
-            <p class="text-xs text-white/60 hidden sm:block">{{ t('brand_subtitle') }}</p>
-          </div>
-        </div>
-        <!-- Nav actions -->
-        <div class="flex items-center space-x-2">
-          <!-- Language Switcher -->
-          <select 
-            :value="store.activeLang" 
-            @change="(e) => store.setLanguage(e.target.value)"
-            class="custom-select-white bg-white/10 text-white text-sm rounded-lg px-2 py-2 border-none focus:ring-0 outline-none hover:bg-white/20 transition-colors"
-          >
-            <option value="en" class="text-black">EN</option>
-            <option value="am" class="text-black">አማ</option>
-            <option value="om" class="text-black">Orom</option>
-          </select>
-          <AppButton 
-            @click="search"
-            variant="primary"
-            class="hidden sm:inline-flex"
-            size="sm"
-          >
-            {{ t('search_buses') }}
-          </AppButton>
-          <button class="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </header>
+    <MainHeader />
 
     <!-- Hero Section -->
     <section class="relative bg-[#0F172A] overflow-hidden pt-12 sm:pt-20 pb-28 sm:pb-36 animate-fade-in border-b border-white/10" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.08) 1px, transparent 0); background-size: 32px 32px;">
@@ -191,6 +154,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { store, t } from '../store.js'
 import { useMeta } from '../lib/useMeta.js'
+import MainHeader from '../components/MainHeader.vue'
 import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()

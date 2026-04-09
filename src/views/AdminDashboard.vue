@@ -287,6 +287,7 @@
                   <tr class="bg-primary-100/50">
                     <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Plate</th>
                     <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Capacity</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Assigned Route</th>
                     <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Status</th>
                     <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border text-right">Actions</th>
                   </tr>
@@ -295,6 +296,18 @@
                   <tr v-for="bus in store.buses" :key="bus.id" class="hover:bg-primary-100/30 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-text-primary">{{ bus.plate }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{{ bus.capacity }} seats</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <select 
+                        :value="bus.route_id" 
+                        @change="(e) => store.assignRouteToBus(bus.id, e.target.value)"
+                        class="text-xs bg-white border border-border rounded px-2 py-1 focus:ring-1 focus:ring-accent outline-none"
+                      >
+                        <option :value="null">Unassigned</option>
+                        <option v-for="r in store.routes" :key="r.id" :value="r.id">
+                          {{ r.from }} → {{ r.to }}
+                        </option>
+                      </select>
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span :class="[
                         'px-2.5 py-1 inline-flex text-[10px] leading-4 font-bold rounded-full uppercase tracking-wider',

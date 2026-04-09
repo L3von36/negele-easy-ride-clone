@@ -2,34 +2,7 @@
   <div class="min-h-screen bg-background">
 
     <!-- Header -->
-    <header class="bg-primary border-b border-border">
-      <div class="flex justify-between items-center px-4 sm:px-6 py-4 max-w-7xl mx-auto">
-        <div class="flex items-center space-x-3 cursor-pointer" @click="$router.back()">
-          <img src="/favicon.png" alt="Logo" class="rounded-lg w-9 h-9 flex-shrink-0 object-cover border border-border" />
-          <div>
-            <p class="text-sm font-bold text-text-primary leading-tight">{{ t('brand_name') }}</p>
-            <p class="text-xs text-text-secondary">{{ t('brand_subtitle') }}</p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2 sm:space-x-4">
-          <!-- Language Switcher -->
-          <select 
-            :value="store.activeLang" 
-            @change="(e) => store.setLanguage(e.target.value)"
-            class="custom-select bg-white text-text-primary text-xs rounded-lg px-2 py-1.5 border border-border focus:ring-0 outline-none hover:bg-gray-50 transition-colors"
-          >
-            <option value="en" class="text-black text-sm">EN</option>
-            <option value="am" class="text-black text-sm">አማ</option>
-            <option value="om" class="text-black text-sm">Orom</option>
-          </select>
-          <button class="w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-gray-100 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </header>
+    <MainHeader showBack />
 
     <div class="max-w-md mx-auto px-4 sm:px-6 py-8">
 
@@ -113,6 +86,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store, t } from '../store.js'
 import { useMeta } from '../lib/useMeta.js'
+import MainHeader from '../components/MainHeader.vue'
 import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
@@ -153,6 +127,7 @@ function confirmBooking() {
     route: `${from.value} → ${to.value}`,
     date: date.value + ', ' + depart.value,
     amount: Number(price.value),
+    seat_number: seat.value,
     status: 'Confirmed',
     boarded: false
   })

@@ -1,128 +1,176 @@
 <template>
-  <div class="min-h-screen bg-background pb-20">
+  <div class="min-h-screen bg-[#0F172A] pb-20 overflow-x-hidden">
     <!-- Driver Header -->
-    <header class="bg-primary pt-8 pb-12 px-6 relative overflow-hidden">
+    <header class="pt-8 pb-32 px-6 relative overflow-hidden bg-gradient-to-b from-[#1E293B] to-[#0F172A]">
       <div class="relative z-10 max-w-2xl mx-auto">
         <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-3">
-             <img src="/favicon.png" alt="Logo" class="rounded-lg w-10 h-10 flex-shrink-0 object-cover border border-white/10 shadow-lg shadow-accent/20" />
+             <div class="p-2 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+                <img src="/favicon.png" alt="Logo" class="w-10 h-10 flex-shrink-0 object-cover rounded-xl" />
+             </div>
              <div>
-                <h1 class="text-white font-black text-lg sm:text-xl tracking-tight leading-none">Driver Portal</h1>
-                <p class="text-white/40 text-[10px] uppercase font-bold tracking-widest mt-1">Personnel Access</p>
+                <h1 class="text-white font-black text-xl tracking-tight leading-none">{{ t('brand_name') }}</h1>
+                <p class="text-white/40 text-[10px] uppercase font-bold tracking-[0.2em] mt-1.5 flex items-center gap-2">
+                   <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                   {{ t('driver_active_duty') }}
+                </p>
              </div>
           </div>
-          <div class="flex items-center gap-4">
-            <div class="text-right hidden sm:block">
-              <p class="text-white font-bold text-sm">{{ store.userProfile?.full_name || 'Staff' }}</p>
-              <p class="text-white/40 text-[10px] font-black uppercase tracking-widest">Active Duty</p>
-            </div>
-            <button @click="handleSignOut" class="h-10 w-10 flex items-center justify-center text-white/70 hover:text-white transition-all bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 shadow-inner">
+          <div class="flex items-center gap-3">
+            <button @click="handleSignOut" class="h-12 w-12 flex items-center justify-center text-white/40 hover:text-white transition-all bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10">
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
             </button>
           </div>
         </div>
 
         <!-- Assignment Information Card -->
-        <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl relative overflow-hidden group">
+        <div class="bg-white/5 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-white/10 shadow-3xl relative overflow-hidden group">
            <div class="relative z-10">
-              <div class="flex justify-between items-start mb-6">
+              <div class="flex justify-between items-start mb-8">
                  <div>
-                    <p class="text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-1.5">Official Assignment</p>
-                    <h2 class="text-white text-3xl font-black tracking-tighter">
-                       {{ store.driverBus?.plate || 'Awaiting Duty' }}
+                    <p class="text-white/40 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Assigned Vehicle</p>
+                    <h2 class="text-white text-4xl font-black tracking-tighter">
+                       {{ store.driverBus?.plate || 'Awaiting Bus' }}
                     </h2>
                  </div>
-                 <div v-if="store.driverBus" class="bg-accent text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-accent/40 animate-pulse">
-                    On Duty
+                 <div v-if="store.driverBus" class="flex flex-col items-end">
+                    <div :class="tripStatusClass" class="text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] shadow-lg transition-all duration-500">
+                       {{ tripStatusText }}
+                    </div>
+                    <p class="text-white/30 text-[10px] font-bold mt-2 uppercase tracking-widest">{{ assignedRoute?.duration }} Est.</p>
                  </div>
               </div>
 
               <!-- Route Path UI -->
-              <div v-if="assignedRoute" class="flex items-center gap-3 py-4 border-y border-white/10 my-6">
-                 <div class="flex-1 text-center">
-                    <p class="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">{{ assignedRoute.from_city }}</p>
-                    <p class="text-white text-sm font-black">DEPARTURE</p>
+              <div v-if="assignedRoute" class="flex items-center gap-6 py-6 border-y border-white/5 my-8">
+                 <div class="flex-1">
+                    <p class="text-white/30 text-[9px] font-black uppercase tracking-widest mb-1">{{ t('departure') }}</p>
+                    <p class="text-white text-lg font-black tracking-tight leading-tight uppercase">{{ assignedRoute.from_city }}</p>
                  </div>
                  <div class="flex flex-col items-center flex-shrink-0">
-                    <div class="w-12 h-[1px] bg-white/30 relative">
-                       <div class="absolute -top-1.5 left-1/2 -ml-1.5 w-3 h-3 bg-accent rounded-full border-2 border-primary"></div>
+                    <div class="w-16 h-[2px] bg-white/10 relative">
+                       <div class="absolute -top-2 left-1/2 -ml-2.5 w-5 h-5 bg-accent rounded-full border-[3px] border-[#1E293B] shadow-lg shadow-accent/40"></div>
                     </div>
                  </div>
-                 <div class="flex-1 text-center">
-                    <p class="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">{{ assignedRoute.to_city }}</p>
-                    <p class="text-white text-sm font-black">DESTINATION</p>
+                 <div class="flex-1 text-right">
+                    <p class="text-white/30 text-[9px] font-black uppercase tracking-widest mb-1">{{ t('destination') }}</p>
+                    <p class="text-white text-lg font-black tracking-tight leading-tight uppercase">{{ assignedRoute.to_city }}</p>
                  </div>
               </div>
 
               <!-- Boarding Progress -->
-              <div v-if="store.driverBus" class="space-y-2">
+              <div v-if="store.driverBus" class="space-y-4">
                  <div class="flex justify-between items-end">
-                    <p class="text-white/60 text-[10px] font-black uppercase tracking-widest">Boarding Progress</p>
-                    <p class="text-white font-black text-sm">{{ boardingPercentage }}%</p>
+                    <div class="flex items-center gap-2">
+                       <p class="text-white/40 text-[10px] font-black uppercase tracking-widest">{{ t('boarding_progress') }}</p>
+                       <span class="text-accent text-[10px] font-black tracking-widest">{{ boardedCount }}/{{ manifestoCount }}</span>
+                    </div>
+                    <p class="text-white font-black text-xl italic tracking-tighter">{{ boardingPercentage }}%</p>
                  </div>
-                 <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div class="h-full bg-accent transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]" :style="{ width: boardingPercentage + '%' }"></div>
+                 <div class="h-3 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                    <div class="h-full bg-gradient-to-r from-accent to-orange-400 transition-all duration-1000 shadow-[0_0_15px_rgba(249,115,22,0.4)]" :style="{ width: boardingPercentage + '%' }"></div>
                  </div>
-                 <p class="text-white/40 text-[10px] font-medium italic">Confirmed: {{ boardedCount }} / {{ manifestoCount }} Passengers</p>
               </div>
 
-              <div v-else class="py-4 text-center">
-                 <p class="text-white/70 text-sm font-medium">No bus assigned to your account in Supabase yet.</p>
+              <div v-else class="py-10 text-center">
+                 <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white/20">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                 </div>
+                 <p class="text-white text-sm font-bold">No Vehicle Assigned</p>
+                 <p class="text-white/40 text-[10px] uppercase font-bold tracking-widest mt-1">Contact Administrator</p>
+              </div>
+
+              <!-- Trip Controls (Pro Feature) -->
+              <div v-if="store.driverBus" class="mt-8 pt-8 border-t border-white/5 grid grid-cols-2 gap-4">
+                  <button 
+                    @click="startTrip" 
+                    :disabled="busStatus === 'On Route'"
+                    class="bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 text-white p-4 rounded-3xl font-black text-[10px] tracking-widest uppercase transition-all flex flex-col items-center gap-2 border border-white/10"
+                  >
+                    <svg class="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 9-14 9V3z"/></svg>
+                    Depart Station
+                  </button>
+                  <button 
+                    @click="endTrip" 
+                    :disabled="busStatus === 'Active'"
+                    class="bg-white/10 hover:bg-white/20 disabled:opacity-30 disabled:hover:bg-white/10 text-white p-4 rounded-3xl font-black text-[10px] tracking-widest uppercase transition-all flex flex-col items-center gap-2 border border-white/10"
+                  >
+                    <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Finish Trip
+                  </button>
               </div>
            </div>
            
-           <!-- Decorative BG logic -->
-           <div class="absolute -right-12 -top-12 w-40 h-40 bg-accent/20 rounded-full blur-3xl group-hover:bg-accent/30 transition-all duration-700"></div>
+           <!-- Decorative Background Glow -->
+           <div class="absolute -right-20 -top-20 w-64 h-64 bg-accent/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-accent/20 transition-all duration-1000"></div>
         </div>
       </div>
     </header>
 
     <!-- Manifest Content -->
-    <main class="max-w-2xl mx-auto px-6 -mt-8 relative z-20">
-        <PassengerManifest 
-          v-if="assignedRoute" 
-          :initial-route="assignedRouteText"
-          :show-route-filter="false"
-          compact
-        />
-        
-        <!-- Empty Trip State -->
-        <div v-else-if="!store.driverBus" class="bg-card rounded-3xl p-12 text-center border border-border shadow-soft animate-fade-in">
-           <div class="w-20 h-20 bg-primary-100 rounded-2xl rotate-3 flex items-center justify-center mx-auto mb-6 text-accent shadow-inner">
-              <svg class="w-10 h-10 -rotate-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-           </div>
-           <h3 class="text-xl font-black text-text-primary tracking-tight">Assignment Pending</h3>
-           <p class="text-text-secondary mt-2 mb-8 max-w-sm mx-auto text-sm leading-relaxed">Please contact the Transport Authority Administrator to link your staff profile to a bus plate.</p>
-           <div class="bg-primary/5 p-5 rounded-2xl border border-dashed border-border inline-block max-w-xs">
-              <p class="text-xs font-black text-text-primary uppercase tracking-widest mb-1.5 border-b border-border pb-1">Required Information</p>
-              <p class="text-xs text-text-secondary leading-relaxed">Your User ID: <span class="font-mono text-[10px] break-all text-accent">{{ store.user?.id }}</span></p>
-           </div>
+    <main class="max-w-2xl mx-auto px-6 -mt-16 relative z-20">
+        <div class="flex items-center justify-between mb-4 px-2">
+           <h3 class="text-white font-black text-sm uppercase tracking-[0.2em] opacity-40">{{ t('passenger_manifest') }}</h3>
+           <button 
+            @click="isScannerOpen = true"
+            class="bg-accent hover:bg-orange-600 text-white px-5 py-2.5 rounded-2xl font-black text-[10px] tracking-widest uppercase shadow-xl shadow-accent/40 flex items-center gap-2 transition-all active:scale-95"
+           >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h2M4 8h12m4 12h2M6 20h2" /></svg>
+              Scan Ticket
+           </button>
+        </div>
+
+        <div class="bg-[#1E293B] rounded-[2rem] border border-white/10 shadow-2xl overflow-hidden min-h-[400px]">
+          <PassengerManifest 
+            v-if="assignedRoute" 
+            :initial-route="assignedRouteText"
+            :show-route-filter="false"
+            :show-stats="false"
+            compact
+          />
+          
+          <!-- Empty Trip State -->
+          <div v-else-if="!store.driverBus" class="p-20 text-center animate-fade-in">
+             <div class="w-24 h-24 bg-white/5 rounded-[2rem] rotate-6 flex items-center justify-center mx-auto mb-8 text-white/10">
+                <svg class="w-12 h-12 -rotate-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+             </div>
+             <h3 class="text-white text-xl font-black tracking-tight">Assignment Pending</h3>
+             <p class="text-white/40 mt-3 max-w-xs mx-auto text-xs leading-relaxed font-bold tracking-wide uppercase">Your profile needs to be linked to a bus plate by an administrator.</p>
+          </div>
         </div>
     </main>
 
-    <!-- Mobile Footer Navigation (Quick Logout/Home) -->
-    <div class="fixed bottom-6 left-0 right-0 px-6 flex justify-center sm:hidden z-50">
-       <button @click="handleSignOut" class="bg-black text-white px-8 py-3 rounded-2xl font-black text-sm shadow-2xl flex items-center gap-2 border border-white/20">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-          LOGOUT
-       </button>
-    </div>
+    <!-- Modals -->
+    <QRScannerModal 
+      :is-open="isScannerOpen" 
+      @close="isScannerOpen = false"
+      @scanned="onTicketScanned"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { store } from '../store.js'
+import { store, t } from '../store.js'
 import PassengerManifest from '../components/PassengerManifest.vue'
+import QRScannerModal from '../components/QRScannerModal.vue'
 
 const router = useRouter()
+const isScannerOpen = ref(false)
 
 // Personalization Logic
-const assignedRoute = computed(() => {
-  // Use the bus-route relationship if available, or find the route matching the bus settings
-  // For now, we assume driverBus holds a route object as per our new store logic select('*, routes(*)')
-  return store.driverBus?.routes
+const assignedRoute = computed(() => store.driverBus?.routes)
+const busStatus = computed(() => store.driverBus?.status || 'Active')
+
+const tripStatusText = computed(() => {
+  if (busStatus.value === 'On Route') return 'In Transit'
+  return 'Ready for Duty'
+})
+
+const tripStatusClass = computed(() => {
+  if (busStatus.value === 'On Route') return 'bg-green-500 text-white shadow-green-500/40'
+  return 'bg-accent text-white shadow-accent/40'
 })
 
 const assignedRouteText = computed(() => {
@@ -152,6 +200,21 @@ const boardingPercentage = computed(() => {
   return Math.round((boardedCount.value / manifestoCount.value) * 100)
 })
 
+function onTicketScanned(ticketId) {
+  // Logic already handled in QRScannerModal via store.toggleBoarding
+  console.log('Successfully boarded ticket:', ticketId)
+}
+
+function startTrip() {
+  if (!store.driverBus?.id) return
+  store.updateBusStatus(store.driverBus.id, 'On Route')
+}
+
+function endTrip() {
+  if (!store.driverBus?.id) return
+  store.updateBusStatus(store.driverBus.id, 'Active')
+}
+
 async function handleSignOut() {
   await store.signOut()
   router.push('/admin-login')
@@ -159,6 +222,9 @@ async function handleSignOut() {
 </script>
 
 <style scoped>
+.shadow-3xl {
+  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.5);
+}
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out;
 }

@@ -70,6 +70,9 @@
               <h4 class="font-bold text-text-primary text-base sm:text-lg tracking-tight">{{ booking.name }}</h4>
               <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
                 <p class="text-xs font-bold text-accent">ID: #{{ booking.id }}</p>
+                <div class="px-2 py-0.5 rounded bg-primary-100 border border-border">
+                  <p class="text-[10px] font-black text-text-primary">SEAT #{{ booking.seat_number || 'N/A' }}</p>
+                </div>
                 <p class="text-xs font-medium text-text-secondary">{{ booking.phone }}</p>
                 <p class="text-xs font-medium text-text-secondary border-l border-border pl-3">{{ booking.route }}</p>
               </div>

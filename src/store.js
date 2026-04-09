@@ -71,6 +71,12 @@ export const store = reactive({
         'hawassa': 'Hawassa',
         'moyale': 'Moyale',
         'yabello': 'Yabello'
+      },
+      nav: {
+        home: 'Home',
+        driver_portal: 'Driver Portal',
+        admin_portal: 'Admin Portal',
+        navigation: 'Navigation'
       }
     },
     am: {
@@ -131,6 +137,12 @@ export const store = reactive({
         'hawassa': 'ሀዋሳ',
         'moyale': 'ሞያሌ',
         'yabello': 'ያቤሎ'
+      },
+      nav: {
+        home: 'ዋና ገጽ',
+        driver_portal: 'የአሽከርካሪዎች ክፍል',
+        admin_portal: 'የአስተዳዳሪ ክፍክ',
+        navigation: 'ዳሰሳ'
       }
     },
     om: {
@@ -191,6 +203,12 @@ export const store = reactive({
         'hawassa': 'Hawaasaa',
         'moyale': 'Mooyaalee',
         'yabello': 'Yaabeelloo'
+      },
+      nav: {
+        home: 'Mana',
+        driver_portal: 'Bakka Konkolaachisaa',
+        admin_portal: 'Bakka Bulchiinsaa',
+        navigation: 'Navigeshinii'
       }
     }
   },
@@ -247,14 +265,38 @@ export const store = reactive({
   },
 
   async fetchDriverBus() {
-    const { data, error } = await supabase
+    // 1. Fetch the bus assigned to this driver
+    const { data: busData, error: busError } = await supabase
       .from('buses')
-      .select('*, routes(*)')
+      .select('*')
       .eq('driver_id', this.user.id)
       .maybeSingle()
     
-    if (data) this.driverBus = data
-    if (error) console.error('Error fetching driver bus:', error)
+    if (busError) {
+      console.error('Error fetching driver bus:', busError)
+      return
+    }
+
+    if (busData) {
+      // 2. If bus has a route_id, pull the route data separately
+      // This bypasses the foreign key relationship error (PGRST200)
+      if (busData.route_id) {
+        const { data: routeData, error: routeError } = await supabase
+          .from('routes')
+          .select('*')
+          .eq('id', busData.route_id)
+          .maybeSingle()
+        
+        if (routeData) {
+          busData.routes = {
+            ...routeData,
+            from: routeData.from_city,
+            to: routeData.to_city
+          }
+        }
+      }
+      this.driverBus = busData
+    }
   },
 
   async fetchProfile(userId) {
@@ -360,6 +402,12 @@ export const store = reactive({
   async updateBusStatus(id, newStatus) {
     const { error } = await supabase.from('buses').update({ status: newStatus }).eq('id', id)
     if (error) console.error('Error updating bus status:', error)
+  },
+
+  async assignRouteToBus(busId, routeId) {
+    const { error } = await supabase.from('buses').update({ route_id: routeId }).eq('id', busId)
+    if (error) console.error('Error assigning route to bus:', error)
+    else await this.fetchBuses()
   },
 
   setLanguage(lang) { this.activeLang = lang }
