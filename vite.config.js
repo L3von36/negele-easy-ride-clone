@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import Sitemap from 'vite-plugin-sitemap'
 
 export default defineConfig({
   plugins: [
@@ -28,6 +29,10 @@ export default defineConfig({
           }
         ]
       }
+    }),
+    Sitemap({
+      hostname: 'https://negele-easy-ride-clone.vercel.app/',
+      dynamicRoutes: ['/search-results', '/booking', '/confirmation', '/driver', '/admin-dashboard']
     })
   ],
 })

@@ -10,6 +10,7 @@ export const store = reactive({
   bookings: [],
   routes: [],
   buses: [],
+  driverBus: null,
 
   translations: {
     en: {
@@ -213,6 +214,7 @@ export const store = reactive({
       this.user = session.user
       this.isAuthenticated = true
       await this.fetchProfile(session.user.id)
+      if (this.userProfile?.role === 'driver') await this.fetchDriverBus()
     }
 
     await Promise.all([
@@ -229,18 +231,30 @@ export const store = reactive({
       .on('postgres_changes', { event: '*', schema: 'public', table: 'buses' }, () => this.fetchBuses())
       .subscribe()
 
-    // Listen for Auth changes
     supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
         this.user = session.user
         this.isAuthenticated = true
         await this.fetchProfile(session.user.id)
+        if (this.userProfile?.role === 'driver') await this.fetchDriverBus()
       } else {
         this.user = null
         this.userProfile = null
+        this.driverBus = null
         this.isAuthenticated = false
       }
     })
+  },
+
+  async fetchDriverBus() {
+    const { data, error } = await supabase
+      .from('buses')
+      .select('*, routes(*)')
+      .eq('driver_id', this.user.id)
+      .maybeSingle()
+    
+    if (data) this.driverBus = data
+    if (error) console.error('Error fetching driver bus:', error)
   },
 
   async fetchProfile(userId) {

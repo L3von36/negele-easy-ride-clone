@@ -130,17 +130,29 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store, t } from '../store.js'
+import { useMeta } from '../lib/useMeta.js'
 import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
 const routeQuery = useRoute()
+const { setMeta } = useMeta()
 
 const from = computed(() => routeQuery.query.from || 'Addis Ababa')
 const to   = computed(() => routeQuery.query.to   || 'Hawassa')
 const date = computed(() => routeQuery.query.date || 'Today')
+
+onMounted(() => {
+  const fromName = routeQuery.query.from ? t('cities.' + routeQuery.query.from) : from.value
+  const toName = routeQuery.query.to ? t('cities.' + routeQuery.query.to) : to.value
+  
+  setMeta(
+    `Buses from ${fromName} to ${toName}`, 
+    `Compare bus prices and schedules from ${fromName} to ${toName} for ${date.value}. Book your seat online with Negele Easy Ride.`
+  )
+})
 
 // Find the matching route in our store
 const matchingRoute = computed(() => {

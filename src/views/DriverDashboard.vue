@@ -1,108 +1,171 @@
 <template>
   <div class="min-h-screen bg-background pb-20">
     <!-- Driver Header -->
-    <header class="bg-primary pt-10 pb-16 px-6 relative overflow-hidden">
+    <header class="bg-primary pt-8 pb-12 px-6 relative overflow-hidden">
       <div class="relative z-10 max-w-2xl mx-auto">
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-8">
           <div class="flex items-center gap-3">
-             <div class="bg-accent rounded-lg p-2">
-                 <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+             <div class="bg-accent rounded-lg p-2 shadow-lg shadow-accent/20">
+                 <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
              </div>
-             <h1 class="text-white font-black text-xl tracking-tight">Driver Portal</h1>
+             <div>
+                <h1 class="text-white font-black text-lg sm:text-xl tracking-tight leading-none">Driver Portal</h1>
+                <p class="text-white/40 text-[10px] uppercase font-bold tracking-widest mt-1">Personnel Access</p>
+             </div>
           </div>
           <div class="flex items-center gap-4">
             <div class="text-right hidden sm:block">
-              <p class="text-[10px] font-black text-white/40 uppercase tracking-widest">Driver</p>
               <p class="text-white font-bold text-sm">{{ store.userProfile?.full_name || 'Staff' }}</p>
+              <p class="text-white/40 text-[10px] font-black uppercase tracking-widest">Active Duty</p>
             </div>
-            <button @click="handleSignOut" class="text-white/70 hover:text-white transition-colors bg-white/10 p-2 rounded-xl hover:bg-white/20 shadow-inner">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <button @click="handleSignOut" class="h-10 w-10 flex items-center justify-center text-white/70 hover:text-white transition-all bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 shadow-inner">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
             </button>
           </div>
         </div>
 
-        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl">
-           <p class="text-white/60 text-xs font-bold uppercase tracking-widest mb-2">Assigned Trip</p>
-           <h2 class="text-white text-2xl font-black tracking-tight mb-4">
-              {{ currentRoute || 'Select a trip to start' }}
-           </h2>
-           
-           <div class="flex items-center gap-4">
-             <select v-model="currentRoute" class="flex-1 bg-white/10 border-white/20 text-white rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-accent custom-select">
-                <option value="" disabled class="text-black">Select current route...</option>
-                <option v-for="r in store.routes" :key="r.id" :value="r.from + ' → ' + r.to" class="text-black">
-                   {{ r.from }} → {{ r.to }}
-                </option>
-             </select>
+        <!-- Assignment Information Card -->
+        <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-6 md:p-8 border border-white/20 shadow-2xl relative overflow-hidden group">
+           <div class="relative z-10">
+              <div class="flex justify-between items-start mb-6">
+                 <div>
+                    <p class="text-white/60 text-[10px] font-black uppercase tracking-[0.2em] mb-1.5">Official Assignment</p>
+                    <h2 class="text-white text-3xl font-black tracking-tighter">
+                       {{ store.driverBus?.plate || 'Awaiting Duty' }}
+                    </h2>
+                 </div>
+                 <div v-if="store.driverBus" class="bg-accent text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-lg shadow-accent/40 animate-pulse">
+                    On Duty
+                 </div>
+              </div>
+
+              <!-- Route Path UI -->
+              <div v-if="assignedRoute" class="flex items-center gap-3 py-4 border-y border-white/10 my-6">
+                 <div class="flex-1 text-center">
+                    <p class="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">{{ assignedRoute.from_city }}</p>
+                    <p class="text-white text-sm font-black">DEPARTURE</p>
+                 </div>
+                 <div class="flex flex-col items-center flex-shrink-0">
+                    <div class="w-12 h-[1px] bg-white/30 relative">
+                       <div class="absolute -top-1.5 left-1/2 -ml-1.5 w-3 h-3 bg-accent rounded-full border-2 border-primary"></div>
+                    </div>
+                 </div>
+                 <div class="flex-1 text-center">
+                    <p class="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1">{{ assignedRoute.to_city }}</p>
+                    <p class="text-white text-sm font-black">DESTINATION</p>
+                 </div>
+              </div>
+
+              <!-- Boarding Progress -->
+              <div v-if="store.driverBus" class="space-y-2">
+                 <div class="flex justify-between items-end">
+                    <p class="text-white/60 text-[10px] font-black uppercase tracking-widest">Boarding Progress</p>
+                    <p class="text-white font-black text-sm">{{ boardingPercentage }}%</p>
+                 </div>
+                 <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-accent transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]" :style="{ width: boardingPercentage + '%' }"></div>
+                 </div>
+                 <p class="text-white/40 text-[10px] font-medium italic">Confirmed: {{ boardedCount }} / {{ manifestoCount }} Passengers</p>
+              </div>
+
+              <div v-else class="py-4 text-center">
+                 <p class="text-white/70 text-sm font-medium">No bus assigned to your account in Supabase yet.</p>
+              </div>
            </div>
+           
+           <!-- Decorative BG logic -->
+           <div class="absolute -right-12 -top-12 w-40 h-40 bg-accent/20 rounded-full blur-3xl group-hover:bg-accent/30 transition-all duration-700"></div>
         </div>
       </div>
-      
-      <!-- Abstract Background Element -->
-      <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-accent/20 rounded-full blur-3xl"></div>
     </header>
 
     <!-- Manifest Content -->
     <main class="max-w-2xl mx-auto px-6 -mt-8 relative z-20">
-       <PassengerManifest 
-         v-if="currentRoute" 
-         :initial-route="currentRoute"
-         :show-route-filter="false" 
-       />
-       
-       <!-- Empty Trip State -->
-       <div v-else class="bg-card rounded-2xl p-12 text-center border border-border shadow-soft">
-          <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6 text-accent">
-             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <h3 class="text-xl font-black text-text-primary tracking-tight">Ready to start boarding?</h3>
-          <p class="text-text-secondary mt-2 mb-8">Select your trip from the menu above to see your passenger manifest.</p>
-          <div class="bg-primary-100/50 p-4 rounded-xl border border-border inline-block">
-             <p class="text-xs font-bold text-text-primary uppercase tracking-widest mb-1">Station Tip</p>
-             <p class="text-sm text-text-secondary">Verify every passenger's Ticket ID before they enter the bus.</p>
-          </div>
-       </div>
+        <PassengerManifest 
+          v-if="assignedRoute" 
+          :initial-route="assignedRouteText"
+          :show-route-filter="false"
+          compact
+        />
+        
+        <!-- Empty Trip State -->
+        <div v-else-if="!store.driverBus" class="bg-card rounded-3xl p-12 text-center border border-border shadow-soft animate-fade-in">
+           <div class="w-20 h-20 bg-primary-100 rounded-2xl rotate-3 flex items-center justify-center mx-auto mb-6 text-accent shadow-inner">
+              <svg class="w-10 h-10 -rotate-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+           </div>
+           <h3 class="text-xl font-black text-text-primary tracking-tight">Assignment Pending</h3>
+           <p class="text-text-secondary mt-2 mb-8 max-w-sm mx-auto text-sm leading-relaxed">Please contact the Transport Authority Administrator to link your staff profile to a bus plate.</p>
+           <div class="bg-primary/5 p-5 rounded-2xl border border-dashed border-border inline-block max-w-xs">
+              <p class="text-xs font-black text-text-primary uppercase tracking-widest mb-1.5 border-b border-border pb-1">Required Information</p>
+              <p class="text-xs text-text-secondary leading-relaxed">Your User ID: <span class="font-mono text-[10px] break-all text-accent">{{ store.user?.id }}</span></p>
+           </div>
+        </div>
     </main>
 
-    <!-- Status Bar (Stick Bottom for Trip Info) -->
-    <div v-if="currentRoute" class="fixed bottom-0 left-0 right-0 bg-white border-t border-border px-6 py-4 z-50 shadow-large-up flex items-center justify-between">
-       <div>
-          <p class="text-[10px] font-black text-text-secondary uppercase tracking-widest">Active Manifest</p>
-          <p class="text-sm font-bold text-text-primary truncate max-w-[150px]">{{ currentRoute }}</p>
-       </div>
-       <button 
-         class="bg-black text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-accent transition-all active:scale-95 shadow-md"
-         @click="finishTrip"
-       >
-         Complete Trip
+    <!-- Mobile Footer Navigation (Quick Logout/Home) -->
+    <div class="fixed bottom-6 left-0 right-0 px-6 flex justify-center sm:hidden z-50">
+       <button @click="handleSignOut" class="bg-black text-white px-8 py-3 rounded-2xl font-black text-sm shadow-2xl flex items-center gap-2 border border-white/20">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          LOGOUT
        </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { store } from '../store.js'
 import PassengerManifest from '../components/PassengerManifest.vue'
 
 const router = useRouter()
-const currentRoute = ref('')
+
+// Personalization Logic
+const assignedRoute = computed(() => {
+  // Use the bus-route relationship if available, or find the route matching the bus settings
+  // For now, we assume driverBus holds a route object as per our new store logic select('*, routes(*)')
+  return store.driverBus?.routes
+})
+
+const assignedRouteText = computed(() => {
+  if (!assignedRoute.value) return ''
+  return assignedRoute.value.from_city + ' → ' + assignedRoute.value.to_city
+})
+
+const manifestoCount = computed(() => {
+  if (!assignedRouteText.value) return 0
+  return store.bookings.filter(b => 
+    b.status === 'Confirmed' && 
+    b.route === assignedRouteText.value
+  ).length
+})
+
+const boardedCount = computed(() => {
+  if (!assignedRouteText.value) return 0
+  return store.bookings.filter(b => 
+    b.status === 'Confirmed' && 
+    b.route === assignedRouteText.value && 
+    b.boarded
+  ).length
+})
+
+const boardingPercentage = computed(() => {
+  if (manifestoCount.value === 0) return 0
+  return Math.round((boardedCount.value / manifestoCount.value) * 100)
+})
 
 async function handleSignOut() {
   await store.signOut()
   router.push('/admin-login')
 }
-
-function finishTrip() {
-  if(confirm('Are you sure you want to complete this trip? All boarding statuses will be archived.')) {
-    currentRoute.value = ''
-  }
-}
 </script>
 
 <style scoped>
-.shadow-large-up {
-  box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.05), 0 -4px 6px -2px rgba(0, 0, 0, 0.025);
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>

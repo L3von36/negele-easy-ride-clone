@@ -191,12 +191,21 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { store, t } from '../store.js'
+import { useMeta } from '../lib/useMeta.js'
 import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
+const { setMeta } = useMeta()
+
+onMounted(() => {
+  setMeta(
+    'Home', 
+    'The official transport booking portal for Negele Borena. Search buses, verify seats, and book tickets instantly.'
+  )
+})
 
 const fromCity   = ref('')
 const toCity     = ref('')

@@ -1,10 +1,22 @@
 <template>
   <div class="min-h-screen bg-background flex flex-col md:flex-row">
     
+    <!-- Sidebar Overlay (Mobile Only) -->
+    <div 
+      v-if="isSidebarOpen" 
+      @click="isSidebarOpen = false" 
+      class="fixed inset-0 bg-black/50 z-40 md:hidden animate-fade-in"
+    ></div>
+
     <!-- Sidebar -->
-    <aside class="w-full md:w-64 bg-primary text-text-primary flex flex-col flex-shrink-0 animate-fade-in border-r border-border">
+    <aside 
+      :class="[
+        'fixed inset-y-0 left-0 z-50 w-64 bg-primary text-text-primary flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out border-r border-border md:relative md:translate-x-0',
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      ]"
+    >
       <!-- Logo area -->
-      <div class="h-16 flex items-center px-6 border-b border-border">
+      <div class="h-16 flex items-center justify-between px-6 border-b border-border">
         <div class="flex items-center space-x-3 cursor-pointer" @click="$router.push('/')">
           <div class="bg-accent rounded-lg w-8 h-8 flex items-center justify-center flex-shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -13,42 +25,45 @@
           </div>
           <span class="font-bold tracking-tight text-white">Admin Portal</span>
         </div>
+        <button @click="isSidebarOpen = false" class="md:hidden text-white/60 hover:text-white">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
       </div>
       
       <!-- Nav Links -->
       <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
         <button 
-          @click="currentTab = 'Overview'"
+          @click="currentTab = 'Overview'; isSidebarOpen = false"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Overview' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
           Dashboard
         </button>
         <button 
-          @click="currentTab = 'Bookings'"
+          @click="currentTab = 'Bookings'; isSidebarOpen = false"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Bookings' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
           Bookings
         </button>
         <button 
-          @click="currentTab = 'Routes'"
+          @click="currentTab = 'Routes'; isSidebarOpen = false"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Routes' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
           Routes
         </button>
         <button 
-          @click="currentTab = 'Buses'"
+          @click="currentTab = 'Buses'; isSidebarOpen = false"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Buses' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
           Buses
         </button>
         <button 
-          @click="currentTab = 'Reports'"
+          @click="currentTab = 'Reports'; isSidebarOpen = false"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Reports' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
           Financials
         </button>
         <button 
-          @click="currentTab = 'Boarding'"
+          @click="currentTab = 'Boarding'; isSidebarOpen = false"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Boarding' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
           Boarding
@@ -73,11 +88,16 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
       <!-- Top header -->
-      <header class="h-16 bg-white border-b border-border flex items-center justify-between px-6 flex-shrink-0 z-10">
-        <h2 class="text-xl font-bold text-text-primary tracking-tight">{{ currentTab }}</h2>
+      <header class="h-16 bg-white border-b border-border flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-10">
+        <div class="flex items-center">
+          <button @click="isSidebarOpen = true" class="md:hidden mr-3 text-text-secondary hover:text-black">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
+          <h2 class="text-lg md:text-xl font-bold text-text-primary tracking-tight">{{ currentTab }}</h2>
+        </div>
         <div class="flex items-center space-x-4">
           <div class="w-8 h-8 bg-primary-100 rounded-full border border-border flex items-center justify-center text-text-primary font-bold text-xs">
-            A
+            {{ store.userProfile?.full_name?.charAt(0) || 'A' }}
           </div>
         </div>
       </header>
@@ -244,6 +264,57 @@
           </div>
         </div>
 
+        <!-- =================== BUSES TAB =================== -->
+        <div v-if="currentTab === 'Buses'" class="animate-fade-in space-y-6">
+          <div class="bg-card rounded-xl border border-border shadow-soft overflow-hidden p-6">
+            <h3 class="text-lg font-bold text-text-primary mb-4">Add New Bus</h3>
+            <form @submit.prevent="handleNewBus" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <input v-model="newBus.plate" type="text" placeholder="Plate Number (e.g. AA 12345)" class="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-accent" required />
+              </div>
+              <div>
+                <input v-model="newBus.capacity" type="number" placeholder="Capacity" class="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-accent" required />
+              </div>
+              <div>
+                <button type="submit" class="w-full bg-black text-white hover:bg-accent transition-colors py-2 rounded-lg text-sm font-medium">Add Bus</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="bg-card rounded-xl border border-border shadow-soft overflow-hidden">
+            <div class="px-6 py-5 border-b border-border">
+              <h3 class="text-lg font-bold text-text-primary">Fleet Management</h3>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse min-w-[600px]">
+                <thead>
+                  <tr class="bg-primary-100/50">
+                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Plate</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Capacity</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Status</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-border bg-card">
+                  <tr v-for="bus in store.buses" :key="bus.id" class="hover:bg-primary-100/30 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-text-primary">{{ bus.plate }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{{ bus.capacity }} seats</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span :class="[
+                        'px-2.5 py-1 inline-flex text-[10px] leading-4 font-bold rounded-full uppercase tracking-wider',
+                        bus.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      ]">{{ bus.status || 'Active' }}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                      <button @click="store.updateBusStatus(bus.id, bus.status === 'Active' ? 'Maintenance' : 'Active')" class="text-accent hover:text-orange-700 font-medium">Toggle Status</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- =================== BOARDING TAB =================== -->
         <div v-if="currentTab === 'Boarding'" class="animate-fade-in">
            <PassengerManifest />
@@ -273,6 +344,7 @@ import EditRouteModal from '../components/EditRouteModal.vue'
 import PassengerManifest from '../components/PassengerManifest.vue'
 import AdminReports from '../components/AdminReports.vue'
 
+const isSidebarOpen = ref(false)
 const currentTab = ref('Overview')
 
 const newRoute = reactive({

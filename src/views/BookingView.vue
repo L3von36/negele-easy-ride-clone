@@ -113,13 +113,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store, t } from '../store.js'
+import { useMeta } from '../lib/useMeta.js'
 import AppButton from '../components/AppButton.vue'
 
 const router = useRouter()
 const route  = useRoute()
+const { setMeta } = useMeta()
+
+onMounted(() => {
+  setMeta(
+    'Secure Booking', 
+    'Finalize your bus ticket booking. Enter passenger details to secure your seat instantly.'
+  )
+})
 
 const busName = computed(() => route.query.bus    || 'Ethio Bus')
 const price   = computed(() => route.query.price  || 300)

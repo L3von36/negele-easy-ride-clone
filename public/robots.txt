@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://negele-easy-ride-clone.vercel.app/sitemap.xml
