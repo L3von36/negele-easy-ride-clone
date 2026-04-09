@@ -14,6 +14,7 @@ export default {
         accent: '#F97316',
         background: '#F3F4F6',
         card: '#FFFFFF',
+        border: '#E5E7EB',
         'text-primary': '#0F172A',
         'text-secondary': '#6B7280',
       },

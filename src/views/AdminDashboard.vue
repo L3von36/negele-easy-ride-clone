@@ -97,10 +97,18 @@
           </button>
           <h2 class="text-lg md:text-xl font-bold text-text-primary tracking-tight">{{ currentTab }}</h2>
         </div>
-        <div class="flex items-center space-x-4">
-          <div class="w-8 h-8 bg-primary-100 rounded-full border border-border flex items-center justify-center text-text-primary font-bold text-xs">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-primary-100 rounded-full border border-border flex items-center justify-center text-text-primary font-bold text-xs flex-shrink-0">
             {{ store.userProfile?.full_name?.charAt(0) || 'A' }}
           </div>
+          <button
+            @click="handleSignOut"
+            title="Sign out"
+            class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-text-secondary hover:text-red-600 hover:bg-red-50 border border-border rounded-lg transition-all"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            <span class="hidden sm:inline">Sign out</span>
+          </button>
         </div>
       </header>
 
