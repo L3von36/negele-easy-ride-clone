@@ -14,7 +14,7 @@ const ensureOutDirExists = () => {
     configResolved(config) {
       outDir = config.build.outDir
     },
-    closeBundle() {
+    buildStart() {
       mkdirSync(resolve(process.cwd(), outDir), { recursive: true })
     }
   }
