@@ -32,6 +32,7 @@ export default defineConfig({
     }),
     Sitemap({
       hostname: 'https://negele-easy-ride-clone.vercel.app/',
+      generateRobotsTxt: false,
       dynamicRoutes: ['/search-results', '/booking', '/confirmation', '/driver', '/admin-dashboard']
     })
   ],
