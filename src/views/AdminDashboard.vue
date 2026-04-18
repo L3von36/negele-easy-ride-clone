@@ -399,18 +399,16 @@
               <thead>
                 <tr class="bg-primary-100/50">
                   <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Name</th>
-                  <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Email</th>
                   <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Assigned Bus</th>
                   <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Phone</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border bg-card">
                 <tr v-if="store.drivers.length === 0">
-                  <td colspan="4" class="px-6 py-12 text-center text-sm text-text-secondary">No drivers found.</td>
+                  <td colspan="3" class="px-6 py-12 text-center text-sm text-text-secondary">No drivers found. Check Supabase RLS policies.</td>
                 </tr>
                 <tr v-for="driver in store.drivers" :key="driver.id" class="hover:bg-primary-100/30 transition-colors">
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-text-primary">{{ driver.full_name || '—' }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{{ driver.email || '—' }}</td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                     <span v-if="driverBus(driver.id)" class="font-medium text-text-primary">{{ driverBus(driver.id).plate }}</span>
                     <span v-else class="text-text-secondary/50 italic">Unassigned</span>

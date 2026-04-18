@@ -469,12 +469,12 @@ export const store = reactive({
   async fetchDrivers() {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, full_name, email, phone, role')
+      .select('*')
       .eq('role', 'driver')
       .order('full_name', { ascending: true })
 
     if (data) this.drivers = data
-    if (error) console.error('[fetchDrivers] Error — likely an RLS policy issue. Add a policy in Supabase allowing admins to SELECT all profiles:', error)
+    if (error) console.error('[fetchDrivers] Error:', error)
   },
 
   async fetchProfile(userId) {
