@@ -420,7 +420,7 @@ const boardingPercentage = computed(() => {
 })
 
 // Ticket scanning — all validation happens here
-function onTicketScanned(rawId) {
+async function onTicketScanned(rawId) {
   const booking = store.bookings.find(b => b.id === rawId)
 
   if (!booking) {
