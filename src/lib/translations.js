@@ -123,6 +123,52 @@ export const translations = {
       bottom_tip2_desc: 'Tap "Save QR" on the confirmation page to download it directly to your phone.',
       bottom_tip3_title: 'One QR, One Seat',
       bottom_tip3_desc: 'One QR code = one seat. Don\'t share it with others to avoid boarding conflicts.'
+    },
+    analytics: {
+      title: 'Analytics',
+      live_fleet: 'Live Fleet',
+      best_route: 'Best Performing Route',
+      top_bus: 'Highest Occupancy Bus',
+      top_driver: 'Most Active Driver',
+      revenue_bus: 'Revenue per Bus',
+      efficiency_monitor: 'Bus Efficiency Monitor',
+      plate: 'Bus Plate',
+      revenue: 'Revenue',
+      bookings: 'Bookings',
+      efficiency: 'Efficiency',
+      in_transit: 'Active Fleet In Transit',
+      live_updates: 'Live Updates',
+      est_arrival: 'Est. Arrival',
+      passengers: 'Passengers',
+      station_throughput: 'Station Throughput',
+      loading: 'Loading',
+      total_today: 'total departures today',
+      no_active: 'No buses currently on route.'
+    },
+    feedback: {
+      title: 'How was your trip?',
+      subtitle: 'Your feedback helps improve our drivers.',
+      rating_label: 'Your Rating',
+      comment_placeholder: 'Tell us more about the trip...',
+      submit: 'Submit Feedback',
+      thank_you: 'Thank you for your feedback!',
+      save_qr: 'Save Ticket'
+    },
+    driver: {
+      portal: 'Driver Portal',
+      no_bus: 'No Bus Assigned',
+      contact_dispatch: 'Contact dispatch to get assigned to a bus and route.',
+      boarding_progress: 'Boarding Progress',
+      assigned_bus: 'Assigned Bus',
+      scan_ticket: 'Scan Ticket',
+      depart: 'Depart',
+      arrived: 'Arrived',
+      emergency_sos: 'Emergency SOS',
+      hub_chat: 'Hub Chat',
+      manifest: 'Passenger Manifest',
+      waybill: 'Generate Waybill',
+      fuel_report: 'Report Fuel',
+      total_seats: 'seats total'
     }
   },
   am: {
@@ -249,6 +295,52 @@ export const translations = {
       bottom_tip2_desc: 'ቲኬቱን በቀጥታ ወደ ስልክዎ ለማውረድ በማረጋገጫ ገጹ ላይ "Save QR" የሚለውን ይንኩ።',
       bottom_tip3_title: 'አንድ ቲኬት፣ አንድ ወንበር',
       bottom_tip3_desc: 'አንድ የQR ኮድ ለአንድ ወንበር ብቻ የሚያገለግል ነው። ለመሳፈር መደራረብን ለማስቀረት ለሌላ ሰው አያጋሩት።'
+    },
+    analytics: {
+      title: 'ትንታኔ',
+      live_fleet: 'ቀጥታ ስርጭት',
+      best_route: 'ምርጥ መስመር',
+      top_bus: 'ከፍተኛ ተጓዥ ያለው አውቶቡስ',
+      top_driver: 'ንቁ አሽከርካሪ',
+      revenue_bus: 'ገቢ በአውቶቡስ',
+      efficiency_monitor: 'የአውቶቡስ ብቃት መቆጣጠሪያ',
+      plate: 'ሰሌዳ',
+      revenue: 'ገቢ',
+      bookings: 'ትኬቶች',
+      efficiency: 'ብቃት',
+      in_transit: 'በጉዞ ላይ ያሉ አውቶቡሶች',
+      live_updates: 'ቀጥታ መረጃ',
+      est_arrival: 'የመድረሻ ጊዜ',
+      passengers: 'ተጓዦች',
+      station_throughput: 'ጣቢያዎች',
+      loading: 'በመጫን ላይ',
+      total_today: 'ጠቅላላ መነሻዎች',
+      no_active: 'በአሁኑ ጊዜ በጉዞ ላይ ያለ አውቶቡስ የለም።'
+    },
+    feedback: {
+      title: 'ጉዞዎ እንዴት ነበር?',
+      subtitle: 'የእርስዎ አስተያየት አሽከርካሪዎቻችንን ለማሻሻል ይረዳል።',
+      rating_label: 'የእርስዎ ደረጃ',
+      comment_placeholder: 'ስለ ጉዞው ተጨማሪ ይንገሩን...',
+      submit: 'አስተያየት ላክ',
+      thank_you: 'ለአስተያየትዎ እናመሰግናለን!',
+      save_qr: 'ቲኬቱን ያስቀምጡ'
+    },
+    driver: {
+      portal: 'የአሽከርካሪ መግቢያ',
+      no_bus: 'አውቶቡስ አልተመደበም',
+      contact_dispatch: 'አውቶቡስ እና መስመር እንዲመደብልዎ ዋናውን ቢሮ ያነጋግሩ።',
+      boarding_progress: 'የመጫን ሂደት',
+      assigned_bus: 'የተመደበ አውቶቡስ',
+      scan_ticket: 'ቲኬት ስካን',
+      depart: 'መነሻ',
+      arrived: 'መድረሻ',
+      emergency_sos: 'አደጋ ጊዜ',
+      hub_chat: 'መልእክት',
+      manifest: 'የተጓዦች ዝርዝር',
+      waybill: 'ዌይቢል አውርድ',
+      fuel_report: 'ነዳጅ ሪፖርት',
+      total_seats: 'ጠቅላላ ወንበሮች'
     }
   },
   om: {
@@ -375,6 +467,52 @@ export const translations = {
       bottom_tip2_desc: 'Tikeetii keessan kallattiin gara bilbila keessaniitti buusuuf "Save QR" kan jedhu tuqaa.',
       bottom_tip3_title: 'Tikeetii Tokko, Teessoo Tokko',
       bottom_tip3_desc: 'Koodii QR tokko teessoo tokko qofaaf tajaajila. Iddoo imalaa irratti wal-dhabbii uumuuf namoota biroof hin qoodinaa.'
+    },
+    analytics: {
+      title: 'Xiinxala',
+      live_fleet: 'Saphlaatti Ilaaluu',
+      best_route: 'Karaa Irra Caalu',
+      top_bus: 'Awtobusii Teessoo Hedduu',
+      top_driver: 'Konkolaachisaa Cimoo',
+      revenue_bus: 'Galii Awtobusiin',
+      efficiency_monitor: 'Hojii Awtobusii To\'achuu',
+      plate: 'Lakk. Gabatee',
+      revenue: 'Galii',
+      bookings: 'Tikeettii',
+      efficiency: 'Hojii',
+      in_transit: 'Awtobusoota Imala Irra Jiran',
+      live_updates: 'Oduu Haaraa',
+      est_arrival: 'Yeroo Gahuu',
+      passengers: 'Imaltoota',
+      station_throughput: 'Buufataalee',
+      loading: 'Fe\'amaa Jira',
+      total_today: 'ka\'umsa waliigalaa',
+      no_active: 'Awtobusiin imala irra jiru ammaaf hin jiru.'
+    },
+    feedback: {
+      title: 'Imalli keessan akkam ture?',
+      subtitle: 'Yaadni keessan konkolaachisoota keenya fooyyessuuf nu gargaara.',
+      rating_label: 'Sadarkaa Keessan',
+      comment_placeholder: 'Waa\'ee imala keessanii nuun jedhaa...',
+      submit: 'Yaada Ergaa',
+      thank_you: 'Yaada keessaniif galatoomaa!',
+      save_qr: 'Tikeetii Olkaayaa'
+    },
+    driver: {
+      portal: 'Seensa Konkolaachisaa',
+      no_bus: 'Awtobusiin hin ramadamne',
+      contact_dispatch: 'Awtobusii fi karaan akka isiniif ramadamu waajjira qunnamaa.',
+      boarding_progress: 'Adeemsa Fe\'umsaa',
+      assigned_bus: 'Awtobusii Ramadame',
+      scan_ticket: 'Tikeetii Sikaan',
+      depart: 'Ka\'umsa',
+      arrived: 'Gahuu',
+      emergency_sos: 'Yeroo Muddamaa',
+      hub_chat: 'Ergaa',
+      manifest: 'Tarree Imaltootaa',
+      waybill: 'Weeybiilii Hoji',
+      fuel_report: 'Gabaasa boba\'aa',
+      total_seats: 'teessoo waliigalaa'
     }
   }
 }

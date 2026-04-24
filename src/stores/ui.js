@@ -11,8 +11,7 @@ export const useUiStore = defineStore('ui', {
     isAuthenticated: false,
     isInitialized: false,
     activeLang: localStorage.getItem('lang') || 'en',
-    // We'll move the heavy translations to a separate import if needed, 
-    // but for now we'll keep them accessible here.
+    isDark: localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches),
     translations: translations
   }),
 
@@ -30,6 +29,7 @@ export const useUiStore = defineStore('ui', {
 
   actions: {
     async init() {
+      this.applyTheme()
       if (this.isInitialized) return
 
       try {
@@ -93,6 +93,21 @@ export const useUiStore = defineStore('ui', {
     setLanguage(lang) {
       this.activeLang = lang
       localStorage.setItem('lang', lang)
+    },
+    
+    toggleTheme() {
+      this.isDark = !this.isDark
+      this.applyTheme()
+    },
+
+    applyTheme() {
+      if (this.isDark) {
+        document.documentElement.classList.add('dark')
+        localStorage.setItem('theme', 'dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+        localStorage.setItem('theme', 'light')
+      }
     }
   }
 })

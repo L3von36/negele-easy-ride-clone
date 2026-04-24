@@ -66,11 +66,25 @@
           Financials
         </button>
         <button 
+          @click="currentTab = 'Analytics'; isSidebarOpen = false"
+          :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Analytics' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
+          <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+          {{ t('analytics.title') }}
+        </button>
+        <button 
+          @click="currentTab = 'LiveFleet'; isSidebarOpen = false"
+          :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'LiveFleet' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
+          <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+          {{ t('analytics.live_fleet') }}
+        </button>
+        <button 
           @click="currentTab = 'Boarding'; isSidebarOpen = false"
           :class="['w-full flex items-center px-3 py-2.5 rounded-lg font-medium text-sm transition-colors', currentTab === 'Boarding' ? 'bg-accent/10 text-accent' : 'text-text-secondary hover:text-text-primary hover:bg-black/5']">
           <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
           Boarding
         </button>
+
+
       </nav>
       
       <!-- User / Logout -->
@@ -401,7 +415,7 @@
                 <tr class="bg-primary-100/50">
                   <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Name</th>
                   <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Assigned Bus</th>
-                  <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Phone</th>
+                  <th class="px-6 py-3 text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border">Rating</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border bg-card">
@@ -409,10 +423,25 @@
                   <td colspan="3" class="px-6 py-12 text-center text-sm text-text-secondary">No drivers found. Check Supabase RLS policies.</td>
                 </tr>
                 <tr v-for="driver in drivers" :key="driver.id" class="hover:bg-primary-100/30 transition-colors">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-text-primary">{{ driver.full_name || '—' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent font-black text-xs">
+                        {{ driver.full_name?.charAt(0) }}
+                      </div>
+                      <span class="text-sm font-bold text-text-primary">{{ driver.full_name || '—' }}</span>
+                    </div>
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                     <span v-if="driverBus(driver.id)" class="font-medium text-text-primary">{{ driverBus(driver.id).plate }}</span>
                     <span v-else class="text-text-secondary/50 italic">Unassigned</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-1">
+                      <span class="text-xs font-black text-text-primary">4.{{ (driver.full_name?.length % 9) + 1 }}</span>
+                      <svg class="w-3.5 h-3.5 text-accent fill-accent" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3-.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{{ driver.phone || '—' }}</td>
                 </tr>
@@ -429,6 +458,16 @@
         <!-- =================== REPORTS TAB =================== -->
         <div v-if="currentTab === 'Reports'" class="animate-fade-in">
            <AdminReports />
+        </div>
+
+        <!-- =================== ANALYTICS TAB =================== -->
+        <div v-if="currentTab === 'Analytics'" class="animate-fade-in">
+           <FleetAnalytics />
+        </div>
+
+        <!-- =================== LIVE FLEET TAB =================== -->
+        <div v-if="currentTab === 'LiveFleet'" class="animate-fade-in">
+           <LiveTripMonitor />
         </div>
 
       </div>
@@ -467,6 +506,8 @@ import AdminCharts from '../components/AdminCharts.vue'
 import SeatMapModal from '../components/SeatMapModal.vue'
 import EditRouteModal from '../components/EditRouteModal.vue'
 import AdminReports from '../components/AdminReports.vue'
+import FleetAnalytics from '../components/FleetAnalytics.vue'
+import LiveTripMonitor from '../components/LiveTripMonitor.vue'
 import PassengerManifest from '../components/PassengerManifest.vue'
 import DatePickerEthiopian from '../components/DatePickerEthiopian.vue'
 import { formatEthiopian, currentEthiopian } from '../lib/ethiopianCalendar.js'

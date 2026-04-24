@@ -25,7 +25,7 @@
       </div>
 
       <!-- Boarding Pass -->
-      <div class="bg-card rounded-2xl border-t-4 border-accent border border-border shadow-medium overflow-hidden mb-6 animate-fade-in">
+      <div ref="ticketRef" class="bg-card rounded-2xl border-t-4 border-accent border border-border shadow-medium overflow-hidden mb-6 animate-fade-in">
         <!-- Header strip -->
         <div class="bg-primary-100 px-5 sm:px-6 py-4 border-b border-border">
           <div class="flex items-center gap-2 mb-1">
@@ -85,7 +85,21 @@
             {{ t('station_note').replace('{phone}', phone) }}
           </p>
           <!-- Share / copy actions -->
-          <div class="flex items-center gap-2 mt-4">
+          <div class="flex flex-wrap items-center justify-center gap-2 mt-4">
+            <button
+              @click="saveTicketImage"
+              :disabled="isSaving"
+              class="flex items-center gap-1.5 px-3 py-2 bg-text-primary text-white text-xs font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
+            >
+              <svg v-if="!isSaving" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+              <svg v-else class="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ isSaving ? '...' : t('feedback.save_qr') }}
+            </button>
             <button
               v-if="canShare"
               @click="shareTicket"
@@ -113,6 +127,52 @@
         </div>
       </div>
 
+      <!-- Feedback Section -->
+      <div v-if="!feedbackSubmitted" class="bg-card rounded-2xl border border-border shadow-soft p-6 mb-6 animate-fade-in delay-200">
+        <h3 class="text-lg font-black text-text-primary mb-1">{{ t('feedback.title') }}</h3>
+        <p class="text-xs text-text-secondary mb-4">{{ t('feedback.subtitle') }}</p>
+        
+        <div class="flex gap-2 mb-4">
+          <button 
+            v-for="star in 5" 
+            :key="star" 
+            @click="rating = star"
+            class="transition-transform active:scale-90"
+          >
+            <svg 
+              class="w-8 h-8" 
+              :class="star <= rating ? 'text-accent fill-accent' : 'text-gray-300'"
+              viewBox="0 0 20 20" 
+              fill="currentColor"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+          </button>
+        </div>
+
+        <textarea 
+          v-model="comment"
+          :placeholder="t('feedback.comment_placeholder')"
+          class="w-full bg-background border border-border rounded-xl p-4 text-sm text-text-primary placeholder:text-text-secondary focus:ring-2 focus:ring-accent outline-none min-h-[100px] mb-4"
+        ></textarea>
+
+        <AppButton 
+          @click="submitFeedback"
+          :loading="isSubmitting"
+          :disabled="rating === 0"
+          fullWidth
+        >
+          {{ t('feedback.submit') }}
+        </AppButton>
+      </div>
+
+      <div v-else class="bg-green-50 border border-green-100 rounded-2xl p-6 mb-6 text-center animate-fade-in">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <p class="text-green-800 font-bold">{{ t('feedback.thank_you') }}</p>
+      </div>
+
       <!-- Book another -->
       <AppButton
         @click="$router.push('/')"
@@ -129,14 +189,20 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUiStore } from '../stores/ui'
+import { useAddFeedback } from '../lib/queries'
 import MainHeader from '../components/MainHeader.vue'
 import AppButton from '../components/AppButton.vue'
 import QrcodeVue from 'qrcode.vue'
 import { formatEthiopian } from '../lib/ethiopianCalendar.js'
+import html2canvas from 'html2canvas'
 
 const route = useRoute()
 const ui = useUiStore()
 const { t } = ui
+const addFeedbackMutation = useAddFeedback()
+
+const ticketRef = ref(null)
+const isSaving = ref(false)
 
 const busName   = computed(() => route.query.bus    || 'Ethio Bus')
 const price     = computed(() => route.query.price  || 300)
@@ -149,6 +215,55 @@ const date      = computed(() => formatEthiopian(new Date(dateInitial.value), ui
 const name      = computed(() => route.query.name   || '—')
 const phone     = computed(() => route.query.phone  || '—')
 const bookingId = computed(() => route.query.id)
+
+// Feedback state
+const rating = ref(0)
+const comment = ref('')
+const feedbackSubmitted = ref(false)
+const isSubmitting = ref(false)
+
+async function submitFeedback() {
+  if (rating.value === 0) return
+  isSubmitting.value = true
+  try {
+    await addFeedbackMutation.mutateAsync({
+      booking_id: bookingId.value,
+      rating: rating.value,
+      comment: comment.value,
+      created_at: new Date().toISOString()
+    })
+    feedbackSubmitted.value = true
+  } catch (err) {
+    console.error('Feedback failed', err)
+    feedbackSubmitted.value = true
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+async function saveTicketImage() {
+  if (!ticketRef.value || isSaving.value) return
+  isSaving.value = true
+  
+  try {
+    const canvas = await html2canvas(ticketRef.value, {
+      scale: 3, // High quality
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      borderRadius: 16
+    })
+    
+    const image = canvas.toDataURL('image/png')
+    const link = document.createElement('a')
+    link.href = image
+    link.download = `ticket-${bookingId.value || 'booking'}.png`
+    link.click()
+  } catch (err) {
+    console.error('Failed to save ticket', err)
+  } finally {
+    isSaving.value = false
+  }
+}
 
 const details = computed(() => [
   { label: t('passenger'),   value: name.value },
@@ -182,6 +297,7 @@ async function shareTicket() {
     })
   } catch (_) {}
 }
+
 
 </script>
 

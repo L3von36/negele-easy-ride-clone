@@ -4,19 +4,20 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx,vue}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#0F172A',
-          100: '#1E293B',
+          DEFAULT: 'var(--color-primary)',
+          100: 'var(--color-primary-100)',
         },
-        accent: '#F97316',
-        background: '#F3F4F6',
-        card: '#FFFFFF',
-        border: '#E5E7EB',
-        'text-primary': '#0F172A',
-        'text-secondary': '#6B7280',
+        accent: 'var(--color-accent)',
+        background: 'var(--color-bg)',
+        card: 'var(--color-card)',
+        border: 'var(--color-border)',
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
       },
       borderRadius: {
         lg: '16px',
